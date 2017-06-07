@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Web", "VirtoCommerce.LuceneSearchModule.Web\VirtoCommerce.LuceneSearchModule.Web.csproj", "{80396DF8-08CE-451D-8F59-105A6041B17D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Data", "VirtoCommerce.LuceneSearchModule.Data\VirtoCommerce.LuceneSearchModule.Data.csproj", "{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Tests", "VirtoCommerce.LuceneSearchModule.Tests\VirtoCommerce.LuceneSearchModule.Tests.csproj", "{CC39045D-A72A-4398-98E3-B15AA9F8656E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80396DF8-08CE-451D-8F59-105A6041B17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80396DF8-08CE-451D-8F59-105A6041B17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80396DF8-08CE-451D-8F59-105A6041B17D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80396DF8-08CE-451D-8F59-105A6041B17D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
