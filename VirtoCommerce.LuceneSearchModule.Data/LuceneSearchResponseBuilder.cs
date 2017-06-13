@@ -90,7 +90,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 result = request.Aggregations
                     .Select(a => GetAggregation(a, searcher, availableFields))
-                    .Where(a => a?.Values != null && a.Values.Any())
+                    .Where(a => a?.Values?.Any() == true)
                     .ToList();
             }
 
@@ -123,8 +123,19 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             if (termAggregationRequest != null)
             {
                 var fieldName = GetFacetFieldName(termAggregationRequest.FieldName, availableFields);
-                var values = termAggregationRequest.Values ?? searcher.IndexReader.GetAllFieldValues(fieldName);
-                var valueFilters = values?.ToDictionary(v => v, v => LuceneSearchFilterBuilder.CreateTermsFilter(fieldName, v));
+
+                Dictionary<string, Filter> valueFilters;
+
+                if (!string.IsNullOrEmpty(fieldName))
+                {
+                    var values = termAggregationRequest.Values ?? searcher.IndexReader.GetAllFieldValues(fieldName);
+                    valueFilters = values.ToDictionary(v => v, v => LuceneSearchFilterBuilder.CreateTermsFilter(fieldName, v));
+                }
+                else
+                {
+                    var aggregationValueId = termAggregationRequest.Id ?? termAggregationRequest.FieldName;
+                    valueFilters = new Dictionary<string, Filter> { { aggregationValueId, null } };
+                }
 
                 result = GetAggregation(termAggregationRequest, valueFilters, searcher, true, termAggregationRequest.Size, availableFields);
             }
@@ -185,7 +196,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
                     result = new AggregationResponse
                     {
-                        Id = (aggregationRequest.Id ?? aggregationRequest.FieldName).ToLowerInvariant(),
+                        Id = aggregationRequest.Id ?? aggregationRequest.FieldName,
                         Values = values.ToArray(),
                     };
                 }

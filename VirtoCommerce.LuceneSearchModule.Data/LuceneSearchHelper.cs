@@ -15,7 +15,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         public static string ToLuceneFieldName(string originalName)
         {
-            return originalName.ToLowerInvariant();
+            return originalName?.ToLowerInvariant();
         }
 
         public static string GetBooleanFieldName(string originalName)
@@ -35,6 +35,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         public static IEnumerable<string> GetAllFieldValues(this IndexReader reader, string field)
         {
+            if (string.IsNullOrEmpty(field))
+            {
+                yield break;
+            }
+
             var termEnum = reader.Terms(new Term(field));
 
             do

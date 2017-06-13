@@ -26,14 +26,9 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         public string Scope { get; }
 
         public LuceneSearchProvider(ISearchConnection connection)
-            : this(GetDataDirectoryPath(connection), connection?.Scope)
         {
-        }
-
-        public LuceneSearchProvider(string dataDirectoryPath, string scope)
-        {
-            DataDirectoryPath = dataDirectoryPath;
-            Scope = scope;
+            DataDirectoryPath = GetDataDirectoryPath(connection);
+            Scope = connection?.Scope;
         }
 
         public virtual Task DeleteIndexAsync(string documentType)
