@@ -339,11 +339,5 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             return Path.Combine(DataDirectoryPath, indexName);
         }
-
-
-        protected static string GetDataDirectoryPath(ISearchConnection connection)
-        {
-            return connection?["DataDirectoryPath"] ?? connection?["server"];
-        }
     }
 }
