@@ -99,6 +99,7 @@
     <Compile Include="LuceneSearchFilterBuilder.cs" />
     <Compile Include="LuceneSearchHelper.cs" />
     <Compile Include="LuceneSearchProvider.cs" />
+    <Compile Include="LuceneSearchProviderSettings.cs" />
     <Compile Include="LuceneSearchRequest.cs" />
     <Compile Include="LuceneSearchRequestBuilder.cs" />
     <Compile Include="LuceneSearchResponseBuilder.cs" />

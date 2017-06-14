@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System.Web.Hosting;
+using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.LuceneSearchModule.Data;
 using VirtoCommerce.Platform.Core.Common;
@@ -23,6 +24,10 @@ namespace VirtoCommerce.LuceneSearchModule.Web
 
             if (searchConnection?.Provider?.EqualsInvariant("Lucene") == true)
             {
+                var dataDirectoryPath = HostingEnvironment.MapPath(searchConnection["DataDirectoryPath"] ?? searchConnection["server"]);
+                var luceneSettings = new LuceneSearchProviderSettings(dataDirectoryPath, searchConnection.Scope);
+
+                _container.RegisterInstance(luceneSettings);
                 _container.RegisterType<ISearchProvider, LuceneSearchProvider>(new ContainerControlledLifetimeManager());
             }
         }

@@ -13,7 +13,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
         protected override ISearchProvider GetSearchProvider()
         {
-            return new LuceneSearchProvider(new SearchConnection($"server={_dataDirectoryPath};scope=test"));
+            return new LuceneSearchProvider(new LuceneSearchProviderSettings(_dataDirectoryPath, "test"));
         }
     }
 }
