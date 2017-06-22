@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
@@ -15,7 +16,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             var result = new SearchResponse
             {
                 TotalCount = response.TotalHits,
-                Documents = GetDocuments(response, request, searcher),
+                Documents = GetDocuments(response, request, searcher, availableFields),
                 Aggregations = GetAggregations(request, searcher, availableFields)
             };
 
@@ -23,7 +24,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         }
 
 
-        private static IList<SearchDocument> GetDocuments(TopDocs response, SearchRequest request, IndexSearcher searcher)
+        private static IList<SearchDocument> GetDocuments(TopDocs response, SearchRequest request, IndexSearcher searcher, ICollection<string> availableFields)
         {
             var result = new List<SearchDocument>();
 
@@ -32,14 +33,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             for (var i = request.Skip; i < maxIndex; i++)
             {
                 var providerDocument = searcher.Doc(response.ScoreDocs[i].Doc);
-                var document = ToSearchDocument(providerDocument);
+                var document = ToSearchDocument(providerDocument, availableFields);
                 result.Add(document);
             }
 
             return result;
         }
 
-        private static SearchDocument ToSearchDocument(Document providerDocument)
+        private static SearchDocument ToSearchDocument(Document providerDocument, ICollection<string> availableFields)
         {
             var result = new SearchDocument();
 
@@ -47,12 +48,21 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             foreach (var field in documentFields)
             {
+                var stringValue = field.StringValue;
+
                 if (field.Name.EqualsInvariant(LuceneSearchHelper.KeyFieldName))
                 {
-                    result.Id = field.StringValue;
+                    result.Id = stringValue;
                 }
                 else
                 {
+                    var isDateTimeField = availableFields.Contains(LuceneSearchHelper.GetDateTimeFieldName(field.Name));
+                    if (isDateTimeField)
+                    {
+                        var ticks = long.Parse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                        stringValue = new DateTime(ticks, DateTimeKind.Utc).ToString("O");
+                    }
+
                     if (result.ContainsKey(field.Name)) // convert to array
                     {
                         var newValues = new List<object>();
@@ -69,12 +79,12 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                             newValues.Add(currentValue);
                         }
 
-                        newValues.Add(field.StringValue);
+                        newValues.Add(stringValue);
                         result[field.Name] = newValues.ToArray();
                     }
                     else
                     {
-                        result.Add(field.Name, field.StringValue);
+                        result.Add(field.Name, stringValue);
                     }
                 }
             }

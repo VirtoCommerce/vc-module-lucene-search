@@ -230,11 +230,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             }
             else if (field.Value is DateTime)
             {
+                var dateTimeFieldName = LuceneSearchHelper.GetDateTimeFieldName(field.Name);
+
                 foreach (var value in field.Values)
                 {
                     var numericField = new NumericField(fieldName, store, index != Field.Index.NO);
                     numericField.SetLongValue(((DateTime)value).Ticks);
                     result.Add(numericField);
+                    result.Add(new Field(dateTimeFieldName, value.ToStringInvariant(), Field.Store.NO, Field.Index.NOT_ANALYZED));
                 }
             }
             else if (field.Value is GeoPoint)
