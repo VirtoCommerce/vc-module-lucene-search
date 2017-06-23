@@ -31,6 +31,9 @@ You can configure the search configuration string either in the VC Manager UI or
 </connectionStrings>
 ```
 
+# Known issues
+* Sorting by geo distance (`GeoDistanceSortingField`) is not supported
+
 # License
 Copyright (c) Virtosoftware Ltd. All rights reserved.
 
