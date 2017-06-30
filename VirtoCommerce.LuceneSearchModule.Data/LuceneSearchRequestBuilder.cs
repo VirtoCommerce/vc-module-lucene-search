@@ -34,7 +34,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             Sort result = null;
 
-            if (request?.Sorting != null)
+            if (request?.Sorting?.Any() == true)
             {
                 result = new Sort(request.Sorting.Select(f => GetSortField(f, availableFields)).ToArray());
             }
