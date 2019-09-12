@@ -1,0 +1,9 @@
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.deps.json
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.dll
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.csprojAssemblyReference.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.csproj.CoreCompileInputs.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.AssemblyInfoInputs.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.AssemblyInfo.cs
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.pdb
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.dll
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Data\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.pdb

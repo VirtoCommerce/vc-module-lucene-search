@@ -1,0 +1,14 @@
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.dll
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.csprojAssemblyReference.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.csproj.CoreCompileInputs.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.AssemblyInfoInputs.cache
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.AssemblyInfo.cs
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.deps.json
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.runtimeconfig.json
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.runtimeconfig.dev.json
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.dll
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.pdb
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\bin\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Data.pdb
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.csproj.CopyComplete
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.dll
+C:\_CODE\vc\V3\modules\vc-module-lucene-search\src\VirtoCommerce.LuceneSearchModule.Web\obj\Debug\netcoreapp2.2\VirtoCommerce.LuceneSearchModule.Web.pdb
