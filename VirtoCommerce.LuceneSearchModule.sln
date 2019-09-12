@@ -1,13 +1,14 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.12
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Web", "VirtoCommerce.LuceneSearchModule.Web\VirtoCommerce.LuceneSearchModule.Web.csproj", "{80396DF8-08CE-451D-8F59-105A6041B17D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{26CF8474-B907-4191-8F9B-203D0506D60E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Data", "VirtoCommerce.LuceneSearchModule.Data\VirtoCommerce.LuceneSearchModule.Data.csproj", "{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{075D70C7-518E-4453-8DEA-18F49D766466}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.LuceneSearchModule.Tests", "VirtoCommerce.LuceneSearchModule.Tests\VirtoCommerce.LuceneSearchModule.Tests.csproj", "{CC39045D-A72A-4398-98E3-B15AA9F8656E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.LuceneSearchModule.Data", "src\VirtoCommerce.LuceneSearchModule.Data\VirtoCommerce.LuceneSearchModule.Data.csproj", "{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.LuceneSearchModule.Web", "src\VirtoCommerce.LuceneSearchModule.Web\VirtoCommerce.LuceneSearchModule.Web.csproj", "{541B8A56-0BA0-484E-B1B5-9CD94315661A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,20 +16,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{80396DF8-08CE-451D-8F59-105A6041B17D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{80396DF8-08CE-451D-8F59-105A6041B17D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{80396DF8-08CE-451D-8F59-105A6041B17D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{80396DF8-08CE-451D-8F59-105A6041B17D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFDEA2A4-A477-4091-9CC6-5DCA82D13CE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC39045D-A72A-4398-98E3-B15AA9F8656E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308}.Release|Any CPU.Build.0 = Release|Any CPU
+		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308} = {26CF8474-B907-4191-8F9B-203D0506D60E}
+		{541B8A56-0BA0-484E-B1B5-9CD94315661A} = {26CF8474-B907-4191-8F9B-203D0506D60E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E5D31D7E-7466-44C5-AEB7-3231EE579E7D}
 	EndGlobalSection
 EndGlobal
