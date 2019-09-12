@@ -10,6 +10,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.LuceneSearchM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.LuceneSearchModule.Web", "src\VirtoCommerce.LuceneSearchModule.Web\VirtoCommerce.LuceneSearchModule.Web.csproj", "{541B8A56-0BA0-484E-B1B5-9CD94315661A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.LuceneSearchModule.Tests", "tests\VirtoCommerce.LuceneSearchModule.Tests\VirtoCommerce.LuceneSearchModule.Tests.csproj", "{233E4449-4A1E-473F-AAAD-295706369AB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{541B8A56-0BA0-484E-B1B5-9CD94315661A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{233E4449-4A1E-473F-AAAD-295706369AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{233E4449-4A1E-473F-AAAD-295706369AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{233E4449-4A1E-473F-AAAD-295706369AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{233E4449-4A1E-473F-AAAD-295706369AB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -31,6 +37,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4F15B7E1-5055-44C9-AD06-3D3D7FBBB308} = {26CF8474-B907-4191-8F9B-203D0506D60E}
 		{541B8A56-0BA0-484E-B1B5-9CD94315661A} = {26CF8474-B907-4191-8F9B-203D0506D60E}
+		{233E4449-4A1E-473F-AAAD-295706369AB3} = {075D70C7-518E-4453-8DEA-18F49D766466}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5D31D7E-7466-44C5-AEB7-3231EE579E7D}

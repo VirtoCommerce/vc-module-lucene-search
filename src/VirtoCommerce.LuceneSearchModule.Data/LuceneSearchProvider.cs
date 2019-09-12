@@ -234,7 +234,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     foreach (var value in field.Values)
                     {
                         var stringValue = value.ToStringInvariant();
-                        result.Add(new TextField(fieldName, stringValue, store));
+                        result.Add(new StringField(fieldName, stringValue, store));
                         result.Add(new StringField(booleanFieldName, stringValue, Field.Store.NO));
                     }
                     break;
