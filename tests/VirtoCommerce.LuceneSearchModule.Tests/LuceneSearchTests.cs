@@ -8,6 +8,7 @@ using Xunit;
 namespace VirtoCommerce.LuceneSearchModule.Tests
 {
     [Trait("Category", "CI")]
+    [Trait("Category", "IntegrationTests")]
     public class LuceneSearchTests : SearchProviderTests
     {
         private readonly string _dataDirectoryPath = Path.Combine(Path.GetTempPath(), "lucene");
