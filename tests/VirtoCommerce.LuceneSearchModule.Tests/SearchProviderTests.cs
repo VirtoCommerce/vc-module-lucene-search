@@ -260,126 +260,126 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         //}
 
         //todo
-        //[Fact]
-        //public virtual async Task CanFilterByTerm()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanFilterByTerm()
+        {
+            var provider = GetSearchProvider();
 
-        //    // Filtering by non-existent field name leads to empty result
-        //    var request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "non-existent-field",
-        //            Values = new[] { "value-does-not-matter" }
-        //        },
-        //        Take = 10,
-        //    };
+            // Filtering by non-existent field name leads to empty result
+            var request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "non-existent-field",
+                    Values = new[] { "value-does-not-matter" }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(0, response.DocumentsCount);
-
-
-        //    // Filtering by non-existent field value leads to empty result
-        //    request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "Color",
-        //            Values = new[]
-        //            {
-        //                "non-existent-value-1",
-        //                "non-existent-value-2",
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
-
-        //    response = await provider.SearchAsync(DocumentType, request);
-
-        //    Assert.Equal(0, response.DocumentsCount);
+            Assert.Equal(0, response.DocumentsCount);
 
 
-        //    request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "Color",
-        //            Values = new[]
-        //            {
-        //                    "Red",
-        //                    "Blue",
-        //                    "Black",
-        //                }
-        //        },
-        //        Take = 10,
-        //    };
+            // Filtering by non-existent field value leads to empty result
+            request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "Color",
+                    Values = new[]
+                    {
+                        "non-existent-value-1",
+                        "non-existent-value-2",
+                    }
+                },
+                Take = 10,
+            };
 
-        //    response = await provider.SearchAsync(DocumentType, request);
+            response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(5, response.DocumentsCount);
-
-
-        //    request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "Is",
-        //            Values = new[]
-        //            {
-        //                    "Red",
-        //                    "Blue",
-        //                    "Black",
-        //                }
-        //        },
-        //        Take = 10,
-        //    };
-
-        //    response = await provider.SearchAsync(DocumentType, request);
-
-        //    Assert.Equal(5, response.DocumentsCount);
+            Assert.Equal(0, response.DocumentsCount);
 
 
-        //    request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "Size",
-        //            Values = new[]
-        //            {
-        //                    "1",
-        //                    "2",
-        //                    "3",
-        //                }
-        //        },
-        //        Take = 10,
-        //    };
+            request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "Color",
+                    Values = new[]
+                    {
+                            "Red",
+                            "Blue",
+                            "Black",
+                        }
+                },
+                Take = 10,
+            };
 
-        //    response = await provider.SearchAsync(DocumentType, request);
+            response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(2, response.DocumentsCount);
+            Assert.Equal(5, response.DocumentsCount);
 
 
-        //    request = new SearchRequest
-        //    {
-        //        Filter = new TermFilter
-        //        {
-        //            FieldName = "Date",
-        //            Values = new[]
-        //            {
-        //                    "2017-04-29T15:24:31.180Z",
-        //                    "2017-04-28T15:24:31.180Z",
-        //                    "2017-04-27T15:24:31.180Z",
-        //                }
-        //        },
-        //        Take = 10,
-        //    };
+            request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "Is",
+                    Values = new[]
+                    {
+                            "Red",
+                            "Blue",
+                            "Black",
+                        }
+                },
+                Take = 10,
+            };
 
-        //    response = await provider.SearchAsync(DocumentType, request);
+            response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(2, response.DocumentsCount);
-        //}
+            Assert.Equal(5, response.DocumentsCount);
+
+
+            request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "Size",
+                    Values = new[]
+                    {
+                            "1",
+                            "2",
+                            "3",
+                        }
+                },
+                Take = 10,
+            };
+
+            response = await provider.SearchAsync(DocumentType, request);
+
+            Assert.Equal(2, response.DocumentsCount);
+
+
+            request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "Date",
+                    Values = new[]
+                    {
+                            "2017-04-29T15:24:31.180Z",
+                            "2017-04-28T15:24:31.180Z",
+                            "2017-04-27T15:24:31.180Z",
+                        }
+                },
+                Take = 10,
+            };
+
+            response = await provider.SearchAsync(DocumentType, request);
+
+            Assert.Equal(2, response.DocumentsCount);
+        }
 
         [Fact]
         public virtual async Task CanFilterByBooleanTerm()

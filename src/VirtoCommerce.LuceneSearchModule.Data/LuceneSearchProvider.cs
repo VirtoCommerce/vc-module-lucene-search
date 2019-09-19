@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -27,6 +28,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         private static readonly SpatialContext _spatialContext = SpatialContext.GEO;
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
+        private readonly string[] textFileds = new[] { "__content","Content", "Name" };
 
         public LuceneSearchProvider(IOptions<LuceneSearchOptions> luceneSearchOptions, IOptions<SearchOptions> searchOptions)
         {
@@ -218,13 +220,20 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             switch (field.Value)
             {
                 case string _:
-                    foreach (var value in field.Values)
+                    if (textFileds.Any(x => x.Equals(field.Name)))
                     {
-                        result.Add(new TextField(fieldName, (string)value, store));
-
+                        result.AddRange(field.Values.Select(v => new TextField(fieldName, (string)v, store)));
                         if (field.IsSearchable)
                         {
-                            result.Add(new TextField(LuceneSearchHelper.SearchableFieldName, (string)value, Field.Store.NO));
+                            result.AddRange(field.Values.Select(v => new TextField(LuceneSearchHelper.SearchableFieldName, (string)v, Field.Store.NO)));
+                        }
+                    }
+                    else
+                    {
+                        result.AddRange(field.Values.Select(v => new StringField(fieldName, (string)v, store)));
+                        if (field.IsSearchable)
+                        {
+                            result.AddRange(field.Values.Select(v => new StringField(LuceneSearchHelper.SearchableFieldName, (string)v, Field.Store.NO)));
                         }
                     }
                     break;
