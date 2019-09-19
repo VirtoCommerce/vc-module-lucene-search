@@ -87,43 +87,43 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         }
 
         //todo
-        //[Fact]
-        //public virtual async Task CanSortByStringField()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanSortByStringField()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Sorting = new[]
-        //        {
-        //            // Sorting by non-existent field should be ignored
-        //            new SortingField { FieldName = "non-existent-field" },
-        //            new SortingField { FieldName = "Name" },
-        //        },
-        //        Take = 1,
-        //    };
+            var request = new SearchRequest
+            {
+                Sorting = new[]
+                {
+                    // Sorting by non-existent field should be ignored
+                    new SortingField { FieldName = "non-existent-field" },
+                    new SortingField { FieldName = "Name" },
+                },
+                Take = 1,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(1, response.DocumentsCount);
+            Assert.Equal(1, response.DocumentsCount);
 
-        //    var productName = response.Documents.First()["name"] as string;
-        //    Assert.Equal("Black Sox", productName);
+            var productName = response.Documents.First()["name"] as string;
+            Assert.Equal("Black Sox", productName);
 
 
-        //    request = new SearchRequest
-        //    {
-        //        Sorting = new[] { new SortingField { FieldName = "Name", IsDescending = true } },
-        //        Take = 1,
-        //    };
+            request = new SearchRequest
+            {
+                Sorting = new[] { new SortingField { FieldName = "Name", IsDescending = true } },
+                Take = 1,
+            };
 
-        //    response = await provider.SearchAsync(DocumentType, request);
+            response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(1, response.DocumentsCount);
+            Assert.Equal(1, response.DocumentsCount);
 
-        //    productName = response.Documents.First()["name"] as string;
-        //    Assert.Equal("Sample Product", productName);
-        //}
+            productName = response.Documents.First()["name"] as string;
+            Assert.Equal("Sample Product", productName);
+        }
 
         [Fact]
         public virtual async Task CanSortByNumericField()
@@ -236,28 +236,27 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, response.DocumentsCount);
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanFilterByIds()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanFilterByIds()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Filter = new IdsFilter
-        //        {
-        //            Values = new[] { "Item-2", "Item-3", "Item-9" },
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                Filter = new IdsFilter
+                {
+                    Values = new[] { "Item-2", "Item-3", "Item-9" },
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(2, response.DocumentsCount);
+            Assert.Equal(2, response.DocumentsCount);
 
-        //    Assert.True(response.Documents.Any(d => d.Id == "Item-2"), "Cannot find 'Item-2'");
-        //    Assert.True(response.Documents.Any(d => d.Id == "Item-3"), "Cannot find 'Item-3'");
-        //}
+            Assert.True(response.Documents.Any(d => d.Id == "Item-2"), "Cannot find 'Item-2'");
+            Assert.True(response.Documents.Any(d => d.Id == "Item-3"), "Cannot find 'Item-3'");
+        }
 
         //todo
         [Fact]
@@ -572,165 +571,161 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, response.DocumentsCount);
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanJoinFiltersWithAnd()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanJoinFiltersWithAnd()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Filter = new AndFilter
-        //        {
-        //            ChildFilters = new IFilter[]
-        //            {
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Color",
-        //                    Values = new[]
-        //                    {
-        //                        "Red",
-        //                        "Blue",
-        //                        "Black",
-        //                    }
-        //                },
-        //                new RangeFilter
-        //                {
-        //                    FieldName = "Size",
-        //                    Values = new[]
-        //                    {
-        //                        new RangeFilterValue { Lower = "0", Upper = "4" },
-        //                        new RangeFilterValue { Lower = "4", Upper = "20", IncludeUpper = true },
-        //                    }
-        //                },
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                Filter = new AndFilter
+                {
+                    ChildFilters = new IFilter[]
+                    {
+                        new TermFilter
+                        {
+                            FieldName = "Color",
+                            Values = new[]
+                            {
+                                "Red",
+                                "Blue",
+                                "Black",
+                            }
+                        },
+                        new RangeFilter
+                        {
+                            FieldName = "Size",
+                            Values = new[]
+                            {
+                                new RangeFilterValue { Lower = "0", Upper = "4" },
+                                new RangeFilterValue { Lower = "4", Upper = "20", IncludeUpper = true },
+                            }
+                        },
+                    }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(4, response.DocumentsCount);
-        //}
+            Assert.Equal(4, response.DocumentsCount);
+        }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanJoinFiltersWithOr()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanJoinFiltersWithOr()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        // (Color = Red) OR (Size > 10)
-        //        Filter = new OrFilter
-        //        {
-        //            ChildFilters = new IFilter[]
-        //            {
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Color",
-        //                    Values = new[]
-        //                    {
-        //                        "Red",
-        //                    }
-        //                },
-        //                new RangeFilter
-        //                {
-        //                    FieldName = "Size",
-        //                    Values = new[]
-        //                    {
-        //                        new RangeFilterValue { Lower = "10" },
-        //                    }
-        //                },
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                // (Color = Red) OR (Size > 10)
+                Filter = new OrFilter
+                {
+                    ChildFilters = new IFilter[]
+                    {
+                        new TermFilter
+                        {
+                            FieldName = "Color",
+                            Values = new[]
+                            {
+                                "Red",
+                            }
+                        },
+                        new RangeFilter
+                        {
+                            FieldName = "Size",
+                            Values = new[]
+                            {
+                                new RangeFilterValue { Lower = "10" },
+                            }
+                        },
+                    }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(4, response.DocumentsCount);
-        //}
+            Assert.Equal(4, response.DocumentsCount);
+        }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanFilterByNestedFilters()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanFilterByNestedFilters()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        // (Color = Red) OR (NOT(Color = Blue) AND (Size < 20))
-        //        Filter = new OrFilter
-        //        {
-        //            ChildFilters = new IFilter[]
-        //            {
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Color",
-        //                    Values = new[]
-        //                    {
-        //                        "Red",
-        //                    }
-        //                },
-        //                new AndFilter
-        //                {
-        //                    ChildFilters = new IFilter[]
-        //                    {
-        //                        new NotFilter
-        //                        {
-        //                            ChildFilter = new TermFilter
-        //                            {
-        //                                FieldName = "Color",
-        //                                Values = new[]
-        //                                {
-        //                                    "Blue",
-        //                                }
-        //                            },
-        //                        },
-        //                        new RangeFilter
-        //                        {
-        //                            FieldName = "Size",
-        //                            Values = new[]
-        //                            {
-        //                                new RangeFilterValue { Upper = "20" },
-        //                            }
-        //                        },
-        //                    },
-        //                },
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                // (Color = Red) OR (NOT(Color = Blue) AND (Size < 20))
+                Filter = new OrFilter
+                {
+                    ChildFilters = new IFilter[]
+                    {
+                        new TermFilter
+                        {
+                            FieldName = "Color",
+                            Values = new[]
+                            {
+                                "Red",
+                            }
+                        },
+                        new AndFilter
+                        {
+                            ChildFilters = new IFilter[]
+                            {
+                                new NotFilter
+                                {
+                                    ChildFilter = new TermFilter
+                                    {
+                                        FieldName = "Color",
+                                        Values = new[]
+                                        {
+                                            "Blue",
+                                        }
+                                    },
+                                },
+                                new RangeFilter
+                                {
+                                    FieldName = "Size",
+                                    Values = new[]
+                                    {
+                                        new RangeFilterValue { Upper = "20" },
+                                    }
+                                },
+                            },
+                        },
+                    }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(4, response.DocumentsCount);
-        //}
+            Assert.Equal(4, response.DocumentsCount);
+        }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanLimitFacetSizeForStringField()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanLimitFacetSizeForStringField()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Aggregations = new AggregationRequest[]
-        //        {
-        //            new TermAggregationRequest { FieldName = "Color", Size = 1 },
-        //        },
-        //        Take = 0,
-        //    };
+            var request = new SearchRequest
+            {
+                Aggregations = new AggregationRequest[]
+                {
+                    new TermAggregationRequest { FieldName = "Color", Size = 1 },
+                },
+                Take = 0,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(0, response.DocumentsCount);
-        //    Assert.Equal(1, response.Aggregations?.Count);
+            Assert.Equal(0, response.DocumentsCount);
+            Assert.Equal(1, response.Aggregations?.Count);
 
-        //    Assert.Equal(1, GetAggregationValuesCount(response, "Color"));
-        //    Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
-        //}
+            Assert.Equal(1, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
+        }
 
         [Fact]
         public virtual async Task CanLimitFacetSizeForNumericField()
@@ -755,34 +750,33 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, GetAggregationValueCount(response, "Size", "10"));
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanGetAllFacetValuesForStringField()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanGetAllFacetValuesForStringField()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Aggregations = new AggregationRequest[]
-        //        {
-        //            // Facets for non-existent fields should be ignored
-        //            new TermAggregationRequest { FieldName = "non-existent-field", Size = 0 },
-        //            new TermAggregationRequest { FieldName = "Color", Size = 0 },
-        //        },
-        //        Take = 0,
-        //    };
+            var request = new SearchRequest
+            {
+                Aggregations = new AggregationRequest[]
+                {
+                    // Facets for non-existent fields should be ignored
+                    new TermAggregationRequest { FieldName = "non-existent-field", Size = 0 },
+                    new TermAggregationRequest { FieldName = "Color", Size = 0 },
+                },
+                Take = 0,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(0, response.DocumentsCount);
-        //    Assert.Equal(1, response.Aggregations?.Count);
+            Assert.Equal(0, response.DocumentsCount);
+            Assert.Equal(1, response.Aggregations?.Count);
 
-        //    Assert.Equal(4, GetAggregationValuesCount(response, "Color"));
-        //    Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Silver"));
-        //}
+            Assert.Equal(4, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Silver"));
+        }
 
         [Fact]
         public virtual async Task CanGetAllFacetValuesForNumericField()
@@ -811,40 +805,39 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(1, GetAggregationValueCount(response, "Size", "20"));
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanGetSpecificFacetValuesForStringField()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanGetSpecificFacetValuesForStringField()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Aggregations = new AggregationRequest[]
-        //        {
-        //            new TermAggregationRequest
-        //            {
-        //                // Facets for non-existent fields should be ignored
-        //                FieldName = "non-existent-field",
-        //                Values = new[] { "Red" }
-        //            },
-        //            new TermAggregationRequest
-        //            {
-        //                FieldName = "Color",
-        //                Values = new[] { "Red", "Blue", "White" }
-        //            },
-        //        },
-        //        Take = 0,
-        //    };
+            var request = new SearchRequest
+            {
+                Aggregations = new AggregationRequest[]
+                {
+                    new TermAggregationRequest
+                    {
+                        // Facets for non-existent fields should be ignored
+                        FieldName = "non-existent-field",
+                        Values = new[] { "Red" }
+                    },
+                    new TermAggregationRequest
+                    {
+                        FieldName = "Color",
+                        Values = new[] { "Red", "Blue", "White" }
+                    },
+                },
+                Take = 0,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(0, response.DocumentsCount);
-        //    Assert.Equal(1, response.Aggregations?.Count);
+            Assert.Equal(0, response.DocumentsCount);
+            Assert.Equal(1, response.Aggregations?.Count);
 
-        //    Assert.Equal(2, GetAggregationValuesCount(response, "Color"));
-        //    Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
-        //}
+            Assert.Equal(2, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
+        }
 
         [Fact]
         public virtual async Task CanGetSpecificFacetValuesForNumericField()
@@ -910,52 +903,51 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, size5To10Count);
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanGetAllFacetValuesWhenRequestFilterIsApplied()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanGetAllFacetValuesWhenRequestFilterIsApplied()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Aggregations = new AggregationRequest[]
-        //        {
-        //            new TermAggregationRequest
-        //            {
-        //                FieldName = "Color",
-        //                Values = new[] { "Red", "Blue", "Black", "Silver" }
-        //            },
-        //        },
-        //        Filter = new AndFilter
-        //        {
-        //            ChildFilters = new IFilter[]
-        //            {
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Color",
-        //                    Values = new[] { "Red", "Blue" }
-        //                },
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Size",
-        //                    Values = new[] { "2", "4" }
-        //                },
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                Aggregations = new AggregationRequest[]
+                {
+                    new TermAggregationRequest
+                    {
+                        FieldName = "Color",
+                        Values = new[] { "Red", "Blue", "Black", "Silver" }
+                    },
+                },
+                Filter = new AndFilter
+                {
+                    ChildFilters = new IFilter[]
+                    {
+                        new TermFilter
+                        {
+                            FieldName = "Color",
+                            Values = new[] { "Red", "Blue" }
+                        },
+                        new TermFilter
+                        {
+                            FieldName = "Size",
+                            Values = new[] { "2", "4" }
+                        },
+                    }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(2, response.DocumentsCount);
-        //    Assert.Equal(1, response.Aggregations?.Count);
+            Assert.Equal(2, response.DocumentsCount);
+            Assert.Equal(1, response.Aggregations?.Count);
 
-        //    Assert.Equal(4, GetAggregationValuesCount(response, "Color"));
-        //    Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Silver"));
-        //}
+            Assert.Equal(4, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Silver"));
+        }
 
         [Fact]
         public async Task CanGetFacetWithFilterOnly()
@@ -988,56 +980,55 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, GetAggregationValueCount(response, "Filtered-Aggregation", "Filtered-Aggregation"));
         }
 
-        //todo
-        //[Fact]
-        //public virtual async Task CanApplyDifferentFiltersToFacetsAndRequest()
-        //{
-        //    var provider = GetSearchProvider();
+        [Fact]
+        public virtual async Task CanApplyDifferentFiltersToFacetsAndRequest()
+        {
+            var provider = GetSearchProvider();
 
-        //    var request = new SearchRequest
-        //    {
-        //        Aggregations = new AggregationRequest[]
-        //        {
-        //            new TermAggregationRequest
-        //            {
-        //                FieldName = "Color",
-        //                Values = new[] { "Red", "Blue", "Black", "Silver" },
-        //                Filter = new TermFilter
-        //                {
-        //                    FieldName = "Size",
-        //                    Values = new[] { "10" }
-        //                },
-        //            },
-        //        },
-        //        Filter = new AndFilter
-        //        {
-        //            ChildFilters = new IFilter[]
-        //            {
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Color",
-        //                    Values = new[] { "Red", "Blue" }
-        //                },
-        //                new TermFilter
-        //                {
-        //                    FieldName = "Size",
-        //                    Values = new[] { "2", "4" }
-        //                },
-        //            }
-        //        },
-        //        Take = 10,
-        //    };
+            var request = new SearchRequest
+            {
+                Aggregations = new AggregationRequest[]
+                {
+                    new TermAggregationRequest
+                    {
+                        FieldName = "Color",
+                        Values = new[] { "Red", "Blue", "Black", "Silver" },
+                        Filter = new TermFilter
+                        {
+                            FieldName = "Size",
+                            Values = new[] { "10" }
+                        },
+                    },
+                },
+                Filter = new AndFilter
+                {
+                    ChildFilters = new IFilter[]
+                    {
+                        new TermFilter
+                        {
+                            FieldName = "Color",
+                            Values = new[] { "Red", "Blue" }
+                        },
+                        new TermFilter
+                        {
+                            FieldName = "Size",
+                            Values = new[] { "2", "4" }
+                        },
+                    }
+                },
+                Take = 10,
+            };
 
-        //    var response = await provider.SearchAsync(DocumentType, request);
+            var response = await provider.SearchAsync(DocumentType, request);
 
-        //    Assert.Equal(2, response.DocumentsCount);
-        //    Assert.Equal(1, response.Aggregations?.Count);
+            Assert.Equal(2, response.DocumentsCount);
+            Assert.Equal(1, response.Aggregations?.Count);
 
-        //    Assert.Equal(2, GetAggregationValuesCount(response, "Color"));
-        //    Assert.Equal(0, GetAggregationValueCount(response, "Color", "Red"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
-        //    Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
-        //    Assert.Equal(0, GetAggregationValueCount(response, "Color", "Silver"));
-        //}
+            Assert.Equal(2, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(0, GetAggregationValueCount(response, "Color", "Red"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
+            Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
+            Assert.Equal(0, GetAggregationValueCount(response, "Color", "Silver"));
+        }
     }
 }
