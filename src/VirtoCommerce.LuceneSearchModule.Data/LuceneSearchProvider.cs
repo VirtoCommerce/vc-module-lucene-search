@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -15,6 +14,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Options;
 using Spatial4n.Core.Context;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Exceptions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
@@ -26,9 +26,10 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         private static readonly object _providerlock = new object();
         private static readonly Dictionary<string, IndexWriter> _indexWriters = new Dictionary<string, IndexWriter>();
         private static readonly SpatialContext _spatialContext = SpatialContext.GEO;
+
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
-        private readonly string[] textFileds = new[] { "__content","Content", "Name" };
+        private readonly string[] textFileds = new[] { "__content", "Content", "Name" };
 
         public LuceneSearchProvider(IOptions<LuceneSearchOptions> luceneSearchOptions, IOptions<SearchOptions> searchOptions)
         {
@@ -215,25 +216,28 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             var result = new List<IIndexableField>();
 
             var fieldName = LuceneSearchHelper.ToLuceneFieldName(field.Name);
-            var store = field.IsRetrievable ? Field.Store.YES : Field.Store.NO;
 
             switch (field.Value)
             {
                 case string _:
-                    if (textFileds.Any(x => x.Equals(field.Name)))
+                    if (textFileds.Any(x => x.EqualsInvariant(field.Name)))
                     {
-                        result.AddRange(field.Values.Select(v => new TextField(fieldName, (string)v, store)));
+                        result.AddRange(field.Values.Select(v =>
+                            new Field(fieldName, (string)v, field.IsRetrievable ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED)));
                         if (field.IsSearchable)
                         {
-                            result.AddRange(field.Values.Select(v => new TextField(LuceneSearchHelper.SearchableFieldName, (string)v, Field.Store.NO)));
+                            result.AddRange(field.Values.Select(v =>
+                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, TextField.TYPE_NOT_STORED)));
                         }
                     }
                     else
                     {
-                        result.AddRange(field.Values.Select(v => new StringField(fieldName, (string)v, store)));
+                        result.AddRange(field.Values.Select(v =>
+                            new Field(fieldName, (string)v, field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
                         if (field.IsSearchable)
                         {
-                            result.AddRange(field.Values.Select(v => new StringField(LuceneSearchHelper.SearchableFieldName, (string)v, Field.Store.NO)));
+                            result.AddRange(field.Values.Select(v =>
+                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, StringField.TYPE_NOT_STORED)));
                         }
                     }
                     break;
@@ -243,8 +247,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     foreach (var value in field.Values)
                     {
                         var stringValue = value.ToStringInvariant();
-                        result.Add(new StringField(fieldName, stringValue, store));
-                        result.Add(new StringField(booleanFieldName, stringValue, Field.Store.NO));
+                        result.Add(new Field(fieldName, stringValue, field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED));
+                        result.Add(new Field(booleanFieldName, stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
                 case DateTime _:
@@ -252,20 +256,19 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
                     foreach (var value in field.Values)
                     {
-                        var numericField = new Int64Field(fieldName, ((DateTime)value).Ticks, store);
+                        var numericField = new Int64Field(fieldName, ((DateTime)value).Ticks, field.IsRetrievable ? Int64Field.TYPE_STORED : Int64Field.TYPE_NOT_STORED);
                         result.Add(numericField);
-                        result.Add(new StringField(dateTimeFieldName, value.ToStringInvariant(), Field.Store.NO));
+                        result.Add(new Field(dateTimeFieldName, value.ToStringInvariant(), StringField.TYPE_NOT_STORED));
                     }
                     break;
                 case GeoPoint _:
                     var geoPoint = (GeoPoint)field.Value;
-
-                    result.Add(new StringField(fieldName, geoPoint.ToString(), Field.Store.YES));
-
                     var shape = _spatialContext.MakePoint(geoPoint.Longitude, geoPoint.Latitude);
                     var strategy = new PointVectorStrategy(_spatialContext, fieldName);
 
                     result.AddRange(strategy.CreateIndexableFields(shape));
+                    result.Add(new StoredField(strategy.FieldName, shape.X.ToString(CultureInfo.InvariantCulture) + " " + shape.Y.ToString(CultureInfo.InvariantCulture)));
+
                     break;
                 default:
                     if (double.TryParse(field.Value.ToStringInvariant(), NumberStyles.Float, CultureInfo.InvariantCulture, out _))
@@ -276,16 +279,17 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         {
                             var stringValue = value.ToStringInvariant();
 
-                            var doubleField = new DoubleField(fieldName, double.Parse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture), store);
+                            var doubleField = new DoubleField(fieldName, double.Parse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture), field.IsRetrievable ? DoubleField.TYPE_STORED : DoubleField.TYPE_NOT_STORED);
 
                             result.Add(doubleField);
 
-                            result.Add(new StringField(facetableFieldName, stringValue, Field.Store.NO));
+                            result.Add(new Field(facetableFieldName, stringValue, StringField.TYPE_NOT_STORED));
                         }
                     }
                     else
                     {
-                        result.AddRange(field.Values.Select(value => new TextField(fieldName, value.ToStringInvariant(), store)));
+                        result.AddRange(field.Values.Select(value =>
+                            new Field(fieldName, value.ToStringInvariant(), field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
                     }
                     break;
             }
