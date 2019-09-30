@@ -73,7 +73,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         public static string[] GetAllFacetableFields(this IndexReader reader)
         {
             var availableFields = reader.Leaves
-                                .SelectMany(r => ((AtomicReader)r.Reader).Fields)
+                                .SelectMany(r => r.AtomicReader.Fields)
                                 .Distinct()
                                 .ToArray();
 
