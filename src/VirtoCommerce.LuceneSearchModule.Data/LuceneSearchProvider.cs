@@ -122,7 +122,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
 
             using (var directory = FSDirectory.Open(directoryPath))
-            using (var reader = new IndexWriter(directory, config))
+            using (var writer = new IndexWriter(directory, config))
             {
                 foreach (var document in documents)
                 {
@@ -133,9 +133,10 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     {
                         if (!string.IsNullOrEmpty(document.Id))
                         {
+                            var mgrWriter = new TrackingIndexWriter(writer);
                             var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
-                            reader.DeleteDocuments(term);
-                            resultItem.Succeeded = true;
+                            var deleteResult = mgrWriter.DeleteDocuments(new TermQuery(term));
+                            resultItem.Succeeded = deleteResult == 1;
                         }
                         else
                         {
