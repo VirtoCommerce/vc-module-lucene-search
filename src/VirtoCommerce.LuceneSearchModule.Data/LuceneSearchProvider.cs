@@ -133,9 +133,9 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     {
                         if (!string.IsNullOrEmpty(document.Id))
                         {
-                            var mgrWriter = new TrackingIndexWriter(writer);
+                            var trackingWriter = new TrackingIndexWriter(writer);
                             var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
-                            var deleteResult = mgrWriter.DeleteDocuments(new TermQuery(term));
+                            var deleteResult = trackingWriter.DeleteDocuments(new TermQuery(term));
                             resultItem.Succeeded = deleteResult == 1;
                         }
                         else
