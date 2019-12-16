@@ -11,13 +11,13 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 {
     public static class LuceneSearchResponseBuilder
     {
-        public static SearchResponse ToSearchResponse(this TopDocs response, SearchRequest request, IndexSearcher searcher, string documentType, ICollection<string> availableFields)
+        public static SearchResponse ToSearchResponse(this TopDocs response, SearchRequest request, IndexSearcher searcher, string documentType, ICollection<string> availableFields, Query query)
         {
             var result = new SearchResponse
             {
                 TotalCount = response.TotalHits,
                 Documents = GetDocuments(response, request, searcher, availableFields),
-                Aggregations = GetAggregations(request, searcher, availableFields)
+                Aggregations = GetAggregations(request, searcher, availableFields, query)
             };
 
             return result;
@@ -92,14 +92,15 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static IList<AggregationResponse> GetAggregations(SearchRequest request, IndexSearcher searcher, ICollection<string> availableFields)
+        private static IList<AggregationResponse> GetAggregations(SearchRequest request, IndexSearcher searcher,
+            ICollection<string> availableFields, Query query)
         {
             IList<AggregationResponse> result = null;
 
             if (request.Aggregations != null)
             {
                 result = request.Aggregations
-                    .Select(a => GetAggregation(a, searcher, availableFields))
+                    .Select(a => GetAggregation(a, searcher, availableFields, query))
                     .Where(a => a?.Values?.Any() == true)
                     .ToList();
             }
@@ -107,7 +108,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static AggregationResponse GetAggregation(AggregationRequest aggregation, IndexSearcher searcher, ICollection<string> availableFields)
+        private static AggregationResponse GetAggregation(AggregationRequest aggregation, IndexSearcher searcher,
+            ICollection<string> availableFields, Query query)
         {
             AggregationResponse result = null;
 
@@ -116,17 +118,17 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (termAggregationRequest != null)
             {
-                result = CreateTermAggregationResponse(termAggregationRequest, searcher, availableFields);
+                result = CreateTermAggregationResponse(termAggregationRequest, searcher, availableFields, query);
             }
             else if (rangeAggregationRequest != null)
             {
-                result = CreateRangeAggregationResponse(rangeAggregationRequest, searcher, availableFields);
+                result = CreateRangeAggregationResponse(rangeAggregationRequest, searcher, availableFields, query);
             }
 
             return result;
         }
 
-        private static AggregationResponse CreateTermAggregationResponse(TermAggregationRequest termAggregationRequest, IndexSearcher searcher, ICollection<string> availableFields)
+        private static AggregationResponse CreateTermAggregationResponse(TermAggregationRequest termAggregationRequest, IndexSearcher searcher, ICollection<string> availableFields, Query query)
         {
             AggregationResponse result = null;
 
@@ -147,7 +149,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     valueFilters = new Dictionary<string, Filter> { { aggregationValueId, null } };
                 }
 
-                result = GetAggregation(termAggregationRequest, valueFilters, searcher, true, termAggregationRequest.Size, availableFields);
+                result = GetAggregation(termAggregationRequest, valueFilters, searcher, true, termAggregationRequest.Size, availableFields, query);
             }
 
             return result;
@@ -165,7 +167,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static AggregationResponse CreateRangeAggregationResponse(RangeAggregationRequest rangeAggregationRequest, IndexSearcher searcher, ICollection<string> availableFields)
+        private static AggregationResponse CreateRangeAggregationResponse(RangeAggregationRequest rangeAggregationRequest, IndexSearcher searcher, ICollection<string> availableFields, Query query)
         {
             AggregationResponse result = null;
 
@@ -174,13 +176,13 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(rangeAggregationRequest.FieldName);
                 var valueFilters = rangeAggregationRequest.Values?.ToDictionary(v => v.Id, v => LuceneSearchFilterBuilder.CreateRangeFilterForValue(fieldName, v.Lower, v.Upper, v.IncludeLower, v.IncludeUpper));
 
-                result = GetAggregation(rangeAggregationRequest, valueFilters, searcher, false, null, availableFields);
+                result = GetAggregation(rangeAggregationRequest, valueFilters, searcher, false, null, availableFields, query);
             }
 
             return result;
         }
 
-        private static AggregationResponse GetAggregation(AggregationRequest aggregationRequest, IDictionary<string, Filter> valueFilters, IndexSearcher searcher, bool sortValues, int? maxValuesCount, ICollection<string> availableFields)
+        private static AggregationResponse GetAggregation(AggregationRequest aggregationRequest, IDictionary<string, Filter> valueFilters, IndexSearcher searcher, bool sortValues, int? maxValuesCount, ICollection<string> availableFields, Query query)
         {
             AggregationResponse result = null;
 
@@ -189,7 +191,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                 if (valueFilters != null)
                 {
                     var commonFilter = LuceneSearchFilterBuilder.GetFilterRecursive(aggregationRequest.Filter, availableFields);
-                    var values = valueFilters.Select(kvp => GetAggregationValue(kvp.Key, kvp.Value, commonFilter, searcher))
+                    var values = valueFilters.Select(kvp => GetAggregationValue(kvp.Key, kvp.Value, commonFilter, searcher, query))
                         .Where(v => v != null);
 
                     if (sortValues)
@@ -215,14 +217,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static AggregationResponseValue GetAggregationValue(string valueId, Filter valueFilter, Filter commonFilter, IndexSearcher searcher)
+        private static AggregationResponseValue GetAggregationValue(string valueId, Filter valueFilter, Filter commonFilter, IndexSearcher searcher, Query query)
         {
             AggregationResponseValue result = null;
 
             var filter = LuceneSearchFilterBuilder.JoinNonEmptyFilters(new[] { commonFilter, valueFilter }, Occur.MUST);
             if (filter != null)
             {
-                var count = CalculateFacetCount(searcher, filter);
+                var count = CalculateFacetCount(searcher, filter, query);
                 if (count > 0)
                 {
                     result = new AggregationResponseValue { Id = valueId, Count = count };
@@ -232,9 +234,9 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static long CalculateFacetCount(IndexSearcher searcher, Filter filter)
+        private static long CalculateFacetCount(IndexSearcher searcher, Filter filter, Query query)
         {
-            var response = searcher.Search(new MatchAllDocsQuery(), filter, 1);
+            var response = searcher.Search(query ?? new MatchAllDocsQuery(), filter, 1);
             return response.TotalHits;
         }
     }

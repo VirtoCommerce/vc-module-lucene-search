@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -164,7 +164,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         ? searcher.Search(query, filter, count, sort)
                         : searcher.Search(query, filter, count);
 
-                    var result = providerResponse.ToSearchResponse(request, searcher, documentType, availableFields);
+                    var result = providerResponse.ToSearchResponse(request, searcher, documentType, availableFields, query);
                     return Task.FromResult(result);
                 }
             }
