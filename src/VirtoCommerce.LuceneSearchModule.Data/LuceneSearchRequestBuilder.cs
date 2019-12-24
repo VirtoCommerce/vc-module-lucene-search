@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,17 +67,13 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     sb.Append(WildcardQuery.WILDCARD_STRING);
                 }
                 searchKeywords = sb.ToString();
-                
 
                 if (request.IsFuzzySearch)
                 {
                     const string fuzzyMinSimilarity = "0.7";
-                    var keywords = searchKeywords.Replace("~", string.Empty).Split(_keywordSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-                    searchKeywords = string.Empty;
-                    searchKeywords = keywords.Aggregate(searchKeywords, (current, keyword) => current + $"{keyword}~{fuzzyMinSimilarity}");
+                    searchKeywords = $"\"{searchKeywords}\"~{fuzzyMinSimilarity}";
                 }
-                
+
                 var fields = request.SearchFields?.Select(LuceneSearchHelper.ToLuceneFieldName).ToArray() ?? LuceneSearchHelper.SearchableFields;
                 var analyzer = new StandardAnalyzer(_matchVersion);
 

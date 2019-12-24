@@ -29,7 +29,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
-        private readonly string[] textFileds = new[] { "__content", "Content", "Name" };
+        private readonly string[] textFields = new[] { "__content", "content" };
 
         public LuceneSearchProvider(IOptions<LuceneSearchOptions> luceneSearchOptions, IOptions<SearchOptions> searchOptions)
         {
@@ -221,7 +221,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             switch (field.Value)
             {
                 case string _:
-                    if (textFileds.Any(x => x.EqualsInvariant(field.Name)))
+                    if (textFields.Any(x => x.EqualsInvariant(field.Name)))
                     {
                         result.AddRange(field.Values.Select(v =>
                             new Field(fieldName, (string)v, field.IsRetrievable ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED)));
