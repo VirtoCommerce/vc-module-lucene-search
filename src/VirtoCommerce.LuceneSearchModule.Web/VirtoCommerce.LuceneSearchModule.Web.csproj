@@ -5,9 +5,8 @@
         <!--This line is necessary to copy all dependencies in the bin folder-->
         <!--<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
         <noWarn>1591</noWarn>
-        <ApplicationIcon />
         <OutputType>Library</OutputType>
-        <StartupObject />
+        <IsPackable>False</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
