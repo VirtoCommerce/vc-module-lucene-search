@@ -1,30 +1,28 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <module>
-    <id>VirtoCommerce.LuceneSearch</id>
-    <version>3.0.0</version>
-    <version-tag>rc.4</version-tag>
-    <platformVersion>3.0.0</platformVersion>
-    <dependencies>
-        <dependency id="VirtoCommerce.Search" version="3.0.0" />
-    </dependencies>
-
-    <title>Lucene Search module</title>
-    <description>Indexed search functionality with Lucene engine</description>
-    <authors>
-        <author>Artem Dudarev</author>
-    </authors>
-    <owners>
-        <owner>Virto Commerce</owner>
-    </owners>
-	<groups>
-        <group>commerce</group>
-    </groups>
-    <projectUrl>https://virtocommerce.com/apps/extensions/virto-lucene-search-module</projectUrl>
-    <iconUrl>https://github.com/VirtoCommerce/vc-module-lucene-search/raw/dev/VirtoCommerce.LuceneSearchModule.Web/Content/logo.png</iconUrl>
-    <releaseNotes>Third version.</releaseNotes>
-    <copyright>Copyright © 2020 Virto Commerce. All rights reserved</copyright>
-    <tags>lucene search</tags>
-
-    <assemblyFile>VirtoCommerce.LuceneSearchModule.Web.dll</assemblyFile>
-    <moduleType>VirtoCommerce.LuceneSearchModule.Web.Module, VirtoCommerce.LuceneSearchModule.Web</moduleType>
+  <id>VirtoCommerce.LuceneSearch</id>
+  <version>3.0.0</version>
+  <version-tag>rc.5$</version-tag>
+  <platformVersion>3.0.0</platformVersion>
+  <dependencies>
+    <dependency id="VirtoCommerce.Search" version="3.0.0" />
+  </dependencies>
+  <title>Lucene Search module</title>
+  <description>Indexed search functionality with Lucene engine</description>
+  <authors>
+    <author>Artem Dudarev</author>
+  </authors>
+  <owners>
+    <owner>Virto Commerce</owner>
+  </owners>
+  <groups>
+    <group>commerce</group>
+  </groups>
+  <projectUrl>https://virtocommerce.com/apps/extensions/virto-lucene-search-module</projectUrl>
+  <iconUrl>https://github.com/VirtoCommerce/vc-module-lucene-search/raw/dev/VirtoCommerce.LuceneSearchModule.Web/Content/logo.png</iconUrl>
+  <releaseNotes>Third version.</releaseNotes>
+  <copyright>Copyright В© 2020 Virto Commerce. All rights reserved</copyright>
+  <tags>lucene search</tags>
+  <assemblyFile>VirtoCommerce.LuceneSearchModule.Web.dll</assemblyFile>
+  <moduleType>VirtoCommerce.LuceneSearchModule.Web.Module, VirtoCommerce.LuceneSearchModule.Web</moduleType>
 </module>

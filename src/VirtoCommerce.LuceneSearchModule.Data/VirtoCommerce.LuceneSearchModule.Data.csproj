@@ -1,17 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-        <noWarn>1591</noWarn>
-        <IsPackable>True</IsPackable>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Lucene.Net" Version="4.8.0-beta00006" />
-        <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00006" />
-        <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00006" />
-        <PackageReference Include="Lucene.Net.Spatial" Version="4.8.0-beta00006" />
-        <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.0.0-rc.4" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <noWarn>1591</noWarn>
+    <IsPackable>True</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00006" />
+    <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00006" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00006" />
+    <PackageReference Include="Lucene.Net.Spatial" Version="4.8.0-beta00006" />
+    <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.0.0-rc.5" />
+  </ItemGroup>
 </Project>
