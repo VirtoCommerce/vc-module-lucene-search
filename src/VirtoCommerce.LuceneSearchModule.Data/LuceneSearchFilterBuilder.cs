@@ -28,6 +28,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             var notFilter = filter as NotFilter;
             var andFilter = filter as AndFilter;
             var orFilter = filter as OrFilter;
+            var wildcardTermFilter = filter as WildCardTermFilter;
 
             if (idsFilter != null)
             {
@@ -57,10 +58,12 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 result = CreateOrFilter(orFilter, availableFields);
             }
-
+            else if (wildcardTermFilter != null)
+            {
+                result = CreateWildcardTermFilter(wildcardTermFilter);
+            }
             return result;
         }
-
 
         private static Filter CreateIdsFilter(IdsFilter idsFilter)
         {
@@ -163,6 +166,22 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 var childFilters = orFilter.ChildFilters.Select(filter => GetFilterRecursive(filter, availableFields));
                 result = JoinNonEmptyFilters(childFilters, Occur.SHOULD);
+            }
+
+            return result;
+        }
+
+        private static Filter CreateWildcardTermFilter(WildCardTermFilter wildcardTermFilter)
+        {
+            QueryWrapperFilter result = null;
+
+            if (wildcardTermFilter?.FieldName != null && wildcardTermFilter?.Value != null)
+            {
+                var fieldName = LuceneSearchHelper.ToLuceneFieldName(wildcardTermFilter.FieldName);
+                var term = new Term(fieldName, wildcardTermFilter.Value);
+
+                var wildcardQuery = new WildcardQuery(term);
+                result = new QueryWrapperFilter(wildcardQuery);
             }
 
             return result;

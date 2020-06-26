@@ -705,6 +705,30 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         }
 
         [Fact]
+        public virtual async Task SearchAsync_WildcardFilter_Works()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request = new SearchRequest
+            {
+                // (Color = "*ed"))
+                Filter = new WildCardTermFilter()
+                {
+                    FieldName = "Color",
+                    Value = "*ed",
+                },
+                Take = 10,
+            };
+
+            // Act
+            var response = await provider.SearchAsync(DocumentType, request);
+
+            // Assert
+            Assert.Equal(3, response.DocumentsCount);
+        }
+
+        [Fact]
         public virtual async Task CanLimitFacetSizeForStringField()
         {
             var provider = GetSearchProvider();
