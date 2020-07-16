@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Analysis.Standard;
@@ -74,7 +74,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     DefaultOperator = QueryParser.Operator.AND
                 };
 
-                result = parser.Parse(searchKeywords);
+                result = parser.Parse(QueryParser.Escape(searchKeywords));
             }
 
             return result;
