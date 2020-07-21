@@ -62,8 +62,8 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             var response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(2, response.DocumentsCount);
-            Assert.Equal(6, response.TotalCount);
+            Assert.Equal(3, response.DocumentsCount);
+            Assert.Equal(7, response.TotalCount);
         }
 
         [Fact]
@@ -264,8 +264,27 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             var provider = GetSearchProvider();
 
-            // Filtering by non-existent field name leads to empty result
+            // Filter by code with integer value
             var request = new SearchRequest
+            {
+                Filter = new TermFilter
+                {
+                    FieldName = "code",
+                    Values = new[]
+                    {
+                        "565567699"
+                    }
+                },
+                Take = 10,
+            };
+
+            var response = await provider.SearchAsync(DocumentType, request);
+
+            Assert.Equal(1, response.DocumentsCount);
+
+
+            // Filtering by non-existent field name leads to empty result
+            request = new SearchRequest
             {
                 Filter = new TermFilter
                 {
@@ -275,7 +294,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
-            var response = await provider.SearchAsync(DocumentType, request);
+            response = await provider.SearchAsync(DocumentType, request);
 
             Assert.Equal(0, response.DocumentsCount);
 
@@ -378,6 +397,8 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             response = await provider.SearchAsync(DocumentType, request);
 
             Assert.Equal(2, response.DocumentsCount);
+
+
         }
 
         [Fact]
@@ -413,7 +434,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(4, response.DocumentsCount);
+            Assert.Equal(5, response.DocumentsCount);
         }
 
 
@@ -493,11 +514,11 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, true, false) };
             response = await provider.SearchAsync(DocumentType, criteria);
-            Assert.Equal(6, response.TotalCount);
+            Assert.Equal(7, response.TotalCount);
 
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, false, false) };
             response = await provider.SearchAsync(DocumentType, criteria);
-            Assert.Equal(5, response.TotalCount);
+            Assert.Equal(6, response.TotalCount);
         }
 
         [Fact]
@@ -546,7 +567,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             var response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(4, response.DocumentsCount);
+            Assert.Equal(5, response.DocumentsCount);
 
 
             request = new SearchRequest
@@ -568,7 +589,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(2, response.DocumentsCount);
+            Assert.Equal(3, response.DocumentsCount);
         }
 
         [Fact]
@@ -646,7 +667,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             var response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(4, response.DocumentsCount);
+            Assert.Equal(5, response.DocumentsCount);
         }
 
         [Fact]
@@ -795,7 +816,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
-            Assert.Equal(4, GetAggregationValuesCount(response, "Color"));
+            Assert.Equal(5, GetAggregationValuesCount(response, "Color"));
             Assert.Equal(3, GetAggregationValueCount(response, "Color", "Red"));
             Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
             Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
@@ -821,7 +842,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
-            Assert.Equal(5, GetAggregationValuesCount(response, "Size"));
+            Assert.Equal(6, GetAggregationValuesCount(response, "Size"));
             Assert.Equal(1, GetAggregationValueCount(response, "Size", "2"));
             Assert.Equal(1, GetAggregationValueCount(response, "Size", "3"));
             Assert.Equal(1, GetAggregationValueCount(response, "Size", "4"));

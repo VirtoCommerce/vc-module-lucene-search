@@ -84,7 +84,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             if (termFilter?.FieldName != null && termFilter.Values != null)
             {
                 var isBooleanField = availableFields.Contains(LuceneSearchHelper.GetBooleanFieldName(termFilter.FieldName));
-                var values = termFilter.Values.Select(v => GetFilterValue(v, isBooleanField)).ToArray();
+                var isStringField = string.Equals("code", termFilter.FieldName, StringComparison.InvariantCultureIgnoreCase);
+                var values = termFilter.Values.Select(v => GetFilterValue(v, isBooleanField, isStringField)).ToArray();
 
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(termFilter.FieldName);
                 result = CreateTermsFilter(fieldName, values);
@@ -264,12 +265,15 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return query;
         }
 
-        private static string GetFilterValue(string value, bool isBooleanField)
+        private static string GetFilterValue(string value, bool isBooleanField, bool isStringField)
         {
             if (string.IsNullOrEmpty(value))
             {
                 return string.Empty;
             }
+
+            if (isStringField)
+                return value;
 
             if (isBooleanField)
             {
