@@ -23,6 +23,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 CreateDocument("Item-3", "Red Shirt", "Red", "2017-04-26T15:24:31.180Z", 3, "0,20", null, null, new Price("USD", "default", 10m)),
                 CreateDocument("Item-4", "Black Sox", "Black", "2017-04-25T15:24:31.180Z", 10, "0,30", null, null, new Price("USD", "default", 243.12m), new Price("USD", "supersale", 89m)),
                 CreateDocument("Item-5", "Black Sox2", "Silver", "2017-04-24T15:24:31.180Z", 20, "0,40", null, null, new Price("USD", "default", 700m)),
+                CreateDocument("565567699", "Green Sox", "Green", "2020-07-21T15:24:31.180Z", 30, "0,40", null, null, new Price("USD", "default", 900m)),
             };
         }
 
