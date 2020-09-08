@@ -54,19 +54,20 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (!string.IsNullOrEmpty(request?.SearchKeywords))
             {
-                var searchKeywords = string.Empty;
-
                 //https://stackoverflow.com/questions/48891716/lucene-net-4-8-search-not-returning-results
                 var sb = new StringBuilder(request.SearchKeywords);
+
                 if (!request.SearchKeywords.StartsWith(WildcardQuery.WILDCARD_STRING))
                 {
                     sb.Insert(0, WildcardQuery.WILDCARD_STRING);
                 }
+
                 if (!request.SearchKeywords.EndsWith(WildcardQuery.WILDCARD_STRING))
                 {
                     sb.Append(WildcardQuery.WILDCARD_STRING);
                 }
-                searchKeywords = sb.ToString();
+
+                var searchKeywords = sb.ToString();
 
                 if (request.IsFuzzySearch)
                 {
@@ -83,7 +84,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     AllowLeadingWildcard = true
                 };
 
-                result = parser.Parse(searchKeywords);
+                result = parser.Parse(QueryParserBase.Escape(searchKeywords));
             }
 
             return result;
