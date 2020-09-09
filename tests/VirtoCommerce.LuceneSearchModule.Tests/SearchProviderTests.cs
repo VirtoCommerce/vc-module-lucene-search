@@ -12,7 +12,16 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
     {
         public const string DocumentType = "item";
 
-        [Fact, Priority(100)]
+        protected SearchProviderTests()
+        {
+            var provider = GetSearchProvider();
+
+            provider.DeleteIndexAsync(DocumentType).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetPrimaryDocuments()).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetSecondaryDocuments()).GetAwaiter().GetResult();
+        }
+
+        [Fact]
         public virtual async Task CanAddAndRemoveDocuments()
         {
             // Arrange
