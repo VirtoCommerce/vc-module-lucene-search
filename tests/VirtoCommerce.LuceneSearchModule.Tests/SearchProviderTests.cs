@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -11,11 +12,22 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
     {
         public const string DocumentType = "item";
 
-        [Fact, Priority(100)]
-        public virtual async Task CanAddAndRemoveDocuments()
+        protected SearchProviderTests()
         {
             var provider = GetSearchProvider();
 
+            provider.DeleteIndexAsync(DocumentType).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetPrimaryDocuments()).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetSecondaryDocuments()).GetAwaiter().GetResult();
+        }
+
+        [Fact]
+        public virtual async Task CanAddAndRemoveDocuments()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            // Act
             // Delete index
             await provider.DeleteIndexAsync(DocumentType);
 
@@ -24,16 +36,18 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             var primaryDocuments = GetPrimaryDocuments();
             var response = await provider.IndexAsync(DocumentType, primaryDocuments);
 
+            // Assert
             Assert.NotNull(response);
             Assert.NotNull(response.Items);
             Assert.Equal(primaryDocuments.Count, response.Items.Count);
             Assert.All(response.Items, i => Assert.True(i.Succeeded));
 
-
+            // Act
             // Update index with new fields and add more documents
             var secondaryDocuments = GetSecondaryDocuments();
             response = await provider.IndexAsync(DocumentType, secondaryDocuments);
 
+            // Assert
             Assert.NotNull(response);
             Assert.NotNull(response.Items);
             Assert.Equal(secondaryDocuments.Count, response.Items.Count);
@@ -52,6 +66,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanLimitResults()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -60,8 +75,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 3,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(3, response.DocumentsCount);
             Assert.Equal(7, response.TotalCount);
         }
@@ -69,6 +86,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanRetriveStringCollection()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -76,8 +94,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             var document = response?.Documents?.FirstOrDefault();
             Assert.NotNull(document);
 
@@ -90,6 +110,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanSortByStringField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -103,22 +124,26 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 1,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(1, response.DocumentsCount);
 
             var productName = response.Documents.First()["name"] as string;
             Assert.Equal("Black Sox", productName);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Sorting = new[] { new SortingField { FieldName = "Name", IsDescending = true } },
                 Take = 1,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(1, response.DocumentsCount);
 
             productName = response.Documents.First()["name"] as string;
@@ -128,20 +153,25 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanSortByNumericField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
             {
                 Sorting = new[] { new SortingField { FieldName = "Size", IsDescending = true } },
-                Take = 1,
+                Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
-            Assert.Equal(1, response.DocumentsCount);
-
-            var productName = response.Documents.First()["name"] as string;
-            Assert.Equal("Black Sox2", productName);
+            // Assert
+            var firstProduct = response.Documents.First();
+            var lastProduct = response.Documents.Last();
+            Assert.Equal("Green Sox", firstProduct["name"] as string);
+            Assert.Equal(7, response.DocumentsCount);
+            Assert.Equal(30, Convert.ToInt32(firstProduct["size"]));
+            Assert.Equal(2, Convert.ToInt32(lastProduct["size"]));
         }
 
         //todo
@@ -210,6 +240,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanSearchByKeywords()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -219,11 +250,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(3, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 SearchKeywords = "red shirt",
@@ -231,14 +264,17 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanFilterByIds()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -250,8 +286,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
 
             Assert.True(response.Documents.Any(d => d.Id == "Item-2"), "Cannot find 'Item-2'");
@@ -262,6 +300,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanFilterByTerm()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             // Filter by code with integer value
@@ -278,11 +317,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(1, response.DocumentsCount);
 
-
+            // Arrange
             // Filtering by non-existent field name leads to empty result
             request = new SearchRequest
             {
@@ -294,11 +335,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
 
-
+            // Arrange
             // Filtering by non-existent field value leads to empty result
             request = new SearchRequest
             {
@@ -314,11 +357,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new TermFilter
@@ -334,11 +379,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(5, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new TermFilter
@@ -354,11 +401,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(5, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new TermFilter
@@ -374,11 +423,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new TermFilter
@@ -394,18 +445,18 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
-
-
         }
 
         [Fact]
         public virtual async Task CanFilterByBooleanTerm()
         {
+            // Arrange
             var provider = GetSearchProvider();
-
 
             var request = new SearchRequest
             {
@@ -417,11 +468,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new TermFilter
@@ -432,8 +485,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(5, response.DocumentsCount);
         }
 
@@ -441,6 +496,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanFilterByRange()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             // Filtering by non-existent field name leads to empty result
@@ -457,11 +513,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new RangeFilter
@@ -478,52 +536,78 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanFilterByDateRange()
         {
+            // Arrange
             var provider = GetSearchProvider();
-
             var criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", true, true) };
+            // Act
             var response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(6, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", false, true) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(5, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", true, false) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(5, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", false, false) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(4, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.180Z", true, true) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(6, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.180Z", true, false) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(5, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, true, false) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(7, response.TotalCount);
 
+            // Arrange
             criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, false, false) };
+            // Act
             response = await provider.SearchAsync(DocumentType, criteria);
+            // Assert
             Assert.Equal(6, response.TotalCount);
         }
 
         [Fact]
         public virtual async Task CanFilterByGeoDistance()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -537,14 +621,17 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanInvertFilterWithNot()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -565,11 +652,13 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(5, response.DocumentsCount);
 
-
+            // Arrange
             request = new SearchRequest
             {
                 Filter = new NotFilter
@@ -587,14 +676,17 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(3, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanJoinFiltersWithAnd()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -627,14 +719,17 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(4, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanJoinFiltersWithOr()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -665,14 +760,17 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(5, response.DocumentsCount);
         }
 
         [Fact]
         public virtual async Task CanFilterByNestedFilters()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -720,8 +818,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(4, response.DocumentsCount);
         }
 
@@ -752,6 +852,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanLimitFacetSizeForStringField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -763,8 +864,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -775,6 +878,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanLimitFacetSizeForNumericField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -786,8 +890,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -798,6 +904,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetAllFacetValuesForStringField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -811,8 +918,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -826,6 +935,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetAllFacetValuesForNumericField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -837,8 +947,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -853,6 +965,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetSpecificFacetValuesForStringField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -874,8 +987,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -887,6 +1002,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetSpecificFacetValuesForNumericField()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -902,8 +1018,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -915,6 +1033,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetRangeFacets()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -939,8 +1058,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 }
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             var size0To5Count = GetAggregationValueCount(response, "Size", "0_to_5");
             Assert.Equal(3, size0To5Count);
 
@@ -951,6 +1072,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanGetAllFacetValuesWhenRequestFilterIsApplied()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -982,8 +1104,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -997,6 +1121,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public async Task CanGetFacetWithFilterOnly()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -1016,8 +1141,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 0,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(0, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
@@ -1028,6 +1155,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         [Fact]
         public virtual async Task CanApplyDifferentFiltersToFacetsAndRequest()
         {
+            // Arrange
             var provider = GetSearchProvider();
 
             var request = new SearchRequest
@@ -1064,8 +1192,10 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                 Take = 10,
             };
 
+            // Act
             var response = await provider.SearchAsync(DocumentType, request);
 
+            // Assert
             Assert.Equal(2, response.DocumentsCount);
             Assert.Equal(1, response.Aggregations?.Count);
 
