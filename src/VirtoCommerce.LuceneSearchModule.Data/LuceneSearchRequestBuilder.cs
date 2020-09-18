@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
@@ -54,19 +53,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (!string.IsNullOrEmpty(request?.SearchKeywords))
             {
-                var searchKeywords = string.Empty;
-
-                //https://stackoverflow.com/questions/48891716/lucene-net-4-8-search-not-returning-results
-                var sb = new StringBuilder(request.SearchKeywords);
-                if (!request.SearchKeywords.StartsWith(WildcardQuery.WILDCARD_STRING))
-                {
-                    sb.Insert(0, WildcardQuery.WILDCARD_STRING);
-                }
-                if (!request.SearchKeywords.EndsWith(WildcardQuery.WILDCARD_STRING))
-                {
-                    sb.Append(WildcardQuery.WILDCARD_STRING);
-                }
-                searchKeywords = sb.ToString();
+                var searchKeywords = QueryParserBase.Escape(request.SearchKeywords);
 
                 if (request.IsFuzzySearch)
                 {
