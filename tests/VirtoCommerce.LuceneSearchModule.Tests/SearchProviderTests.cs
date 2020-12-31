@@ -7,7 +7,7 @@ using Xunit;
 namespace VirtoCommerce.LuceneSearchModule.Tests
 {
     [TestCaseOrderer(PriorityTestCaseOrderer.TypeName, PriorityTestCaseOrderer.AssembyName)]
-    [Trait("Category", "IntegrationTest")]
+    //[Trait("Category", "IntegrationTest")]
     public abstract class SearchProviderTests : SearchProviderTestsBase
     {
         public const string DocumentType = "item";
