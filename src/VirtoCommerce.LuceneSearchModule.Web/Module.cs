@@ -8,18 +8,18 @@ using VirtoCommerce.SearchModule.Core.Services;
 
 namespace VirtoCommerce.LuceneSearchModule.Web
 {
-    public class Module : IModule
+    public class Module : IModule, IHasConfiguration
     {
         public ManifestModuleInfo ModuleInfo { get; set; }
+        public IConfiguration Configuration { get; set; }
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var configuration = serviceCollection.BuildServiceProvider().GetService<IConfiguration>();
-            var provider = configuration.GetValue<string>("Search:Provider");
+            var provider = Configuration.GetValue<string>("Search:Provider");
 
             if (provider.EqualsInvariant("Lucene"))
             {
-                serviceCollection.AddOptions<LuceneSearchOptions>().Bind(configuration.GetSection("Search:Lucene")).ValidateDataAnnotations();
+                serviceCollection.AddOptions<LuceneSearchOptions>().Bind(Configuration.GetSection("Search:Lucene")).ValidateDataAnnotations();
                 serviceCollection.AddSingleton<ISearchProvider, LuceneSearchProvider>();
             }
         }
