@@ -16,7 +16,7 @@
   <iconUrl>Modules/$(VirtoCommerce.LuceneSearch)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>Third version.</releaseNotes>
-  <copyright>Copyright 2011 - 2020 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright 2011-2021 Virto Commerce. All rights reserved</copyright>
   <tags>lucene search</tags>
   <assemblyFile>VirtoCommerce.LuceneSearchModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.LuceneSearchModule.Web.Module, VirtoCommerce.LuceneSearchModule.Web</moduleType>
