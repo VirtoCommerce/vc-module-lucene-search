@@ -106,7 +106,6 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(2, stringCollection.Length);
         }
 
-        //todo
         [Fact]
         public virtual async Task CanSortByStringField()
         {
@@ -148,6 +147,35 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             productName = response.Documents.First()["name"] as string;
             Assert.Equal("Sample Product", productName);
+        }
+
+        [Fact]
+        public virtual async Task CanSortByDateField()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request = new SearchRequest
+            {
+                Sorting = new[] { new SortingField { FieldName = "Date" } },
+                Take = 1,
+            };
+
+            // Act
+            var response = await provider.SearchAsync(DocumentType, request);
+
+            // Assert
+            Assert.Equal("Blue Shirt", response.Documents.First()["name"] as string);
+
+
+            // Arrange
+            request.Sorting = new[] { new SortingField { FieldName = "Date", IsDescending = true } };
+
+            // Act
+            response = await provider.SearchAsync(DocumentType, request);
+
+            // Assert
+            Assert.Equal("Green Sox", response.Documents.First()["name"] as string);
         }
 
         [Fact]
@@ -437,9 +465,9 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
                     FieldName = "Date",
                     Values = new[]
                     {
-                            "2017-04-29T15:24:31.180Z",
-                            "2017-04-28T15:24:31.180Z",
-                            "2017-04-27T15:24:31.180Z",
+                            "2017-04-29T15:24:31.3068224Z",
+                            "2017-04-28T15:24:31.3068224Z",
+                            "2017-04-27T15:24:31.3068224Z",
                         }
                 },
                 Take = 10,
@@ -548,56 +576,56 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             // Arrange
             var provider = GetSearchProvider();
-            var criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", true, true) };
+            var criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", "2017-04-28T15:24:31.3068224Z", true, true) };
             // Act
             var response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(6, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", false, true) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", "2017-04-28T15:24:31.3068224Z", false, true) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(5, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", true, false) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", "2017-04-28T15:24:31.3068224Z", true, false) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(5, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", "2017-04-28T15:24:31.180Z", false, false) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", "2017-04-28T15:24:31.3068224Z", false, false) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(4, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.180Z", true, true) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.3068224Z", true, true) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(6, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.180Z", true, false) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", null, "2017-04-28T15:24:31.3068224Z", true, false) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(5, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, true, false) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", null, true, false) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
             Assert.Equal(7, response.TotalCount);
 
             // Arrange
-            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.180Z", null, false, false) };
+            criteria = new SearchRequest { Take = 0, Filter = CreateRangeFilter("Date", "2017-04-23T15:24:31.3068224Z", null, false, false) };
             // Act
             response = await provider.SearchAsync(DocumentType, criteria);
             // Assert
