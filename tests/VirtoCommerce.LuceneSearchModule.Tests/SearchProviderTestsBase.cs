@@ -18,12 +18,12 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             return new List<IndexDocument>
             {
-                CreateDocument("Item-1", "Sample Product", "Red", "2017-04-28T15:24:31.180Z", 2, "0,0", null, null, new Price("USD", "default", 123.23m)),
-                CreateDocument("Item-2", "Red Shirt 2", "Red", "2017-04-27T15:24:31.180Z", 4, "0,10", null, null, new Price("USD", "default", 200m), new Price("USD", "sale", 99m), new Price("EUR", "sale", 300m)),
-                CreateDocument("Item-3", "Red Shirt", "Red", "2017-04-26T15:24:31.180Z", 3, "0,20", null, null, new Price("USD", "default", 10m)),
-                CreateDocument("Item-4", "Black Sox", "Black", "2017-04-25T15:24:31.180Z", 10, "0,30", null, null, new Price("USD", "default", 243.12m), new Price("USD", "supersale", 89m)),
-                CreateDocument("Item-5", "Black Sox2", "Silver", "2017-04-24T15:24:31.180Z", 20, "0,40", null, null, new Price("USD", "default", 700m)),
-                CreateDocument("565567699", "Green Sox", "Green", "2020-07-21T15:24:31.180Z", 30, "0,40", null, null, new Price("USD", "default", 900m)),
+                CreateDocument("Item-1", "Sample Product", "Red", "2017-04-28T15:24:31.3068224Z", 2, "0,0", null, null, new Price("USD", "default", 123.23m)),
+                CreateDocument("Item-2", "Red Shirt 2", "Red", "2017-04-27T15:24:31.3068224Z", 4, "0,10", null, null, new Price("USD", "default", 200m), new Price("USD", "sale", 99m), new Price("EUR", "sale", 300m)),
+                CreateDocument("Item-3", "Red Shirt", "Red", "2017-04-26T15:24:31.3068224Z", 3, "0,20", null, null, new Price("USD", "default", 10m)),
+                CreateDocument("Item-4", "Black Sox", "Black", "2017-04-25T15:24:31.3068224Z", 10, "0,30", null, null, new Price("USD", "default", 243.12m), new Price("USD", "supersale", 89m)),
+                CreateDocument("Item-5", "Black Sox2", "Silver", "2017-04-24T15:24:31.3068224Z", 20, "0,40", null, null, new Price("USD", "default", 700m)),
+                CreateDocument("565567699", "Green Sox", "Green", "2021-05-12T08:51:42.3068224Z", 30, "0,40", null, null, new Price("USD", "default", 900m)),
             };
         }
 
@@ -31,12 +31,12 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             return new List<IndexDocument>
             {
-                CreateDocument("Item-6", "Blue Shirt", "Blue", "2017-04-23T15:24:31.180Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
+                CreateDocument("Item-6", "Blue Shirt", "Blue", "2017-04-23T15:24:31.3068224Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
 
                 //todo
                 // The following documents will be deleted by test
-                //CreateDocument("Item-7", "Blue Shirt", "Blue", "2017-04-23T15:24:31.180Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
-                //CreateDocument("Item-8", "Blue Shirt", "Blue", "2017-04-23T15:24:31.180Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
+                //CreateDocument("Item-7", "Blue Shirt", "Blue", "2017-04-23T15:24:31.3068224Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
+                //CreateDocument("Item-8", "Blue Shirt", "Blue", "2017-04-23T15:24:31.3068224Z", 10, "0,50", "Blue Shirt 2", DateTime.UtcNow, new Price("USD", "default", 23.12m)),
             };
         }
 
