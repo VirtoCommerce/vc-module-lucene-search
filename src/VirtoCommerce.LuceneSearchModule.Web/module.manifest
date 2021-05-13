@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.LuceneSearch</id>
-  <version>3.4.0</version>
+  <version>3.5.0</version>
   <version-tag />
-  <platformVersion>3.0.0</platformVersion>
+  <platformVersion>3.48.0</platformVersion>
   <title>Lucene Search module</title>
   <description>Indexed search functionality with Lucene engine</description>
   <authors>
@@ -16,7 +16,7 @@
   <iconUrl>Modules/$(VirtoCommerce.LuceneSearch)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>Third version.</releaseNotes>
-  <copyright>Copyright 2011 - 2020 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright 2011-2021 Virto Commerce. All rights reserved</copyright>
   <tags>lucene search</tags>
   <assemblyFile>VirtoCommerce.LuceneSearchModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.LuceneSearchModule.Web.Module, VirtoCommerce.LuceneSearchModule.Web</moduleType>

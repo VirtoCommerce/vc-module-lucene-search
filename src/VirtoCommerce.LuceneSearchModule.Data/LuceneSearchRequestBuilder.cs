@@ -42,7 +42,22 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         private static SortField GetSortField(SortingField field, ICollection<string> availableFields)
         {
-            var dataType = availableFields.Contains(LuceneSearchHelper.GetFacetableFieldName(field.FieldName)) ? SortFieldType.DOUBLE : SortFieldType.STRING_VAL;
+            if (field.FieldName == "score")
+            {
+                return new SortField(null, SortFieldType.SCORE, field.IsDescending);
+
+            }
+
+            var dataType = SortFieldType.STRING_VAL;
+            if (availableFields.Contains(LuceneSearchHelper.GetFacetableFieldName(field.FieldName)))
+            {
+                dataType = SortFieldType.DOUBLE;
+            }
+            else if (availableFields.Contains(LuceneSearchHelper.GetDateTimeFieldName(field.FieldName)))
+            {
+                dataType = SortFieldType.INT64;
+            }
+
             var result = new SortField(LuceneSearchHelper.ToLuceneFieldName(field.FieldName), dataType, field.IsDescending);
             return result;
         }
