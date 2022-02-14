@@ -31,6 +31,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         private readonly SearchOptions _searchOptions;
         private readonly string[] textFields = new[] { "__content", "content" };
 
+        public bool IsIndexSwappingSupported => false;
+
         public LuceneSearchProvider(IOptions<LuceneSearchOptions> luceneSearchOptions, IOptions<SearchOptions> searchOptions)
         {
             if (luceneSearchOptions == null)
@@ -61,7 +63,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return Task.FromResult<object>(null);
         }
 
-        public virtual Task<IndexingResult> IndexAsync(string documentType, IList<IndexDocument> documents)
+        public virtual Task<IndexingResult> IndexAsync(string documentType, IList<IndexDocument> documents, bool reindex = false)
         {
             var result = new IndexingResult
             {
@@ -189,6 +191,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 throw new SearchException(ex.Message, ex);
             }
+        }
+
+        public Task SwapIndexAsync(string documentType)
+        {
+            return Task.CompletedTask;
         }
 
 
