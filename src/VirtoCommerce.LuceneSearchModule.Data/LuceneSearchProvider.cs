@@ -63,7 +63,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return Task.FromResult<object>(null);
         }
 
-        public virtual Task<IndexingResult> IndexAsync(string documentType, IList<IndexDocument> documents, bool partialUpdate = false, bool reindex = false)
+        public virtual Task<IndexingResult> IndexAsync(string documentType, IList<IndexDocument> documents, IndexingParameters parameters)
         {
             var result = new IndexingResult
             {
