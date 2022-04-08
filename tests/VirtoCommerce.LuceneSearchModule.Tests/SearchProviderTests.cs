@@ -17,8 +17,8 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             var provider = GetSearchProvider();
 
             provider.DeleteIndexAsync(DocumentType).GetAwaiter().GetResult();
-            provider.IndexAsync(DocumentType, GetPrimaryDocuments(), new IndexingParameters()).GetAwaiter().GetResult();
-            provider.IndexAsync(DocumentType, GetSecondaryDocuments(), new IndexingParameters()).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetPrimaryDocuments()).GetAwaiter().GetResult();
+            provider.IndexAsync(DocumentType, GetSecondaryDocuments()).GetAwaiter().GetResult();
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             // Create index and add documents
             var primaryDocuments = GetPrimaryDocuments();
-            var response = await provider.IndexAsync(DocumentType, primaryDocuments, new IndexingParameters());
+            var response = await provider.IndexAsync(DocumentType, primaryDocuments);
 
             // Assert
             Assert.NotNull(response);
@@ -45,7 +45,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             // Act
             // Update index with new fields and add more documents
             var secondaryDocuments = GetSecondaryDocuments();
-            response = await provider.IndexAsync(DocumentType, secondaryDocuments, new IndexingParameters());
+            response = await provider.IndexAsync(DocumentType, secondaryDocuments);
 
             // Assert
             Assert.NotNull(response);
