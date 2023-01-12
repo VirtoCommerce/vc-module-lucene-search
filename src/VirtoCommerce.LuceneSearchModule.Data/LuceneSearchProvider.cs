@@ -301,7 +301,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         protected virtual string GetIndexName(string documentType)
         {
             // Use different index for each document type
-            return string.Join("-", _searchOptions.Scope, documentType);
+            return string.Join("-", _searchOptions.GetScope(documentType), documentType);
         }
 
         protected virtual void CloseWriter(string indexName, bool optimize)
