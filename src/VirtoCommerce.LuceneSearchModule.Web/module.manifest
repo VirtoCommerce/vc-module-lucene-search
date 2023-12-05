@@ -1,9 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.LuceneSearch</id>
   <version>3.205.0</version>
   <version-tag />
-  <platformVersion>3.200.0</platformVersion>
+
+  <platformVersion>3.400.0</platformVersion>
+  <dependencies>
+    <dependency id="VirtoCommerce.Search" version="3.404.0" />
+  </dependencies>
+
   <title>Lucene Search module</title>
   <description>Indexed search functionality with Lucene engine</description>
   <authors>
@@ -20,9 +25,6 @@
   <tags>lucene search</tags>
   <assemblyFile>VirtoCommerce.LuceneSearchModule.Web.dll</assemblyFile>
   <moduleType>VirtoCommerce.LuceneSearchModule.Web.Module, VirtoCommerce.LuceneSearchModule.Web</moduleType>
-  <dependencies>
-    <dependency id="VirtoCommerce.Search" version="3.218.0" />
-  </dependencies>
   <groups>
     <group>commerce</group>
   </groups>

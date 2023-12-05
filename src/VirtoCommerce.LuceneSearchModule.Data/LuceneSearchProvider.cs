@@ -18,34 +18,43 @@ using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Exceptions;
 using VirtoCommerce.SearchModule.Core.Model;
 using VirtoCommerce.SearchModule.Core.Services;
+using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.LuceneSearchModule.Data
 {
     public class LuceneSearchProvider : ISearchProvider
     {
-        private static readonly object _providerlock = new object();
-        private static readonly Dictionary<string, IndexWriter> _indexWriters = new Dictionary<string, IndexWriter>();
+        private static readonly object _providerLock = new();
+        private static readonly Dictionary<string, IndexWriter> _indexWriters = new();
         private static readonly SpatialContext _spatialContext = SpatialContext.GEO;
 
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
-        private readonly string[] textFields = new[] { "__content", "content" };
+        private readonly string[] _textFields = { ContentFieldName, "content" };
 
         public LuceneSearchProvider(IOptions<LuceneSearchOptions> luceneSearchOptions, IOptions<SearchOptions> searchOptions)
         {
             if (luceneSearchOptions == null)
+            {
                 throw new ArgumentNullException(nameof(luceneSearchOptions));
+            }
+
             _luceneSearchOptions = luceneSearchOptions.Value;
 
             if (searchOptions == null)
+            {
                 throw new ArgumentNullException(nameof(searchOptions));
+            }
+
             _searchOptions = searchOptions.Value;
         }
 
         public virtual Task DeleteIndexAsync(string documentType)
         {
             if (string.IsNullOrEmpty(documentType))
+            {
                 throw new ArgumentNullException(nameof(documentType));
+            }
 
             var indexName = GetIndexName(documentType);
 
@@ -70,7 +79,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             var indexName = GetIndexName(documentType);
 
-            lock (_providerlock)
+            lock (_providerLock)
             {
                 var writer = GetIndexWriter(indexName, true, false);
 
@@ -159,21 +168,22 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 var indexName = GetIndexName(documentType);
                 var directoryPath = GetDirectoryPath(indexName);
+                using var directory = FSDirectory.Open(directoryPath);
 
-                if (!System.IO.Directory.Exists(directoryPath))
+                if (!DirectoryReader.IndexExists(directory))
                 {
-                    System.IO.Directory.CreateDirectory(directoryPath);
+                    return Task.FromResult(new SearchResponse());
                 }
 
-                using (var directory = DirectoryReader.Open(FSDirectory.Open(directoryPath)))
+                using (var reader = DirectoryReader.Open(directory))
                 {
-                    var searcher = new IndexSearcher(directory);
+                    var searcher = new IndexSearcher(reader);
 
-                    var availableFields = directory.GetAllFacetableFields();
+                    var availableFields = reader.GetAllFacetableFields();
                     var providerRequest = LuceneSearchRequestBuilder.BuildRequest(request, indexName, documentType, availableFields);
 
                     var query = string.IsNullOrEmpty(providerRequest?.Query?.ToString()) ? new MatchAllDocsQuery() : providerRequest.Query;
-                    var filter = providerRequest?.Filter?.ToString().Equals("BooleanFilter()") == true ? null : providerRequest?.Filter;
+                    var filter = providerRequest?.Filter?.ToString()?.Equals("BooleanFilter()") == true ? null : providerRequest?.Filter;
                     var sort = providerRequest?.Sort;
                     var count = Math.Max(providerRequest?.Count ?? 0, 1);
 
@@ -196,7 +206,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             var result = new Document();
 
-            document.Fields.Insert(0, new IndexDocumentField(LuceneSearchHelper.KeyFieldName, document.Id) { IsRetrievable = true, IsFilterable = true });
+            document.Fields.Insert(0, new IndexDocumentField(LuceneSearchHelper.KeyFieldName, document.Id, IndexDocumentFieldValueType.String) { IsRetrievable = true, IsFilterable = true });
 
             var providerFields = document.Fields
                 .Where(f => f.Value != null)
@@ -220,8 +230,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             switch (field.Value)
             {
-                case string _:
-                    if (textFields.Any(x => x.EqualsInvariant(field.Name)))
+                case string:
+                    if (_textFields.Any(x => x.EqualsInvariant(field.Name)))
                     {
                         result.AddRange(field.Values.Select(v =>
                             new Field(fieldName, (string)v, field.IsRetrievable ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED)));
@@ -242,7 +252,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         }
                     }
                     break;
-                case bool _:
+                case bool:
                     var booleanFieldName = LuceneSearchHelper.GetBooleanFieldName(field.Name);
 
                     foreach (var value in field.Values)
@@ -252,7 +262,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         result.Add(new Field(booleanFieldName, stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
-                case DateTime _:
+                case DateTime:
                     var dateTimeFieldName = LuceneSearchHelper.GetDateTimeFieldName(field.Name);
 
                     foreach (var value in field.Values)
@@ -262,8 +272,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         result.Add(new Field(dateTimeFieldName, value.ToStringInvariant(), StringField.TYPE_NOT_STORED));
                     }
                     break;
-                case GeoPoint _:
-                    var geoPoint = (GeoPoint)field.Value;
+                case GeoPoint geoPoint:
                     var shape = _spatialContext.MakePoint(geoPoint.Longitude, geoPoint.Latitude);
                     var strategy = new PointVectorStrategy(_spatialContext, fieldName);
 
@@ -306,7 +315,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         protected virtual void CloseWriter(string indexName, bool optimize)
         {
-            lock (_providerlock)
+            lock (_providerLock)
             {
                 if (_indexWriters.ContainsKey(indexName) && _indexWriters[indexName] != null)
                 {
@@ -321,7 +330,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             IndexWriter result = null;
 
-            lock (_providerlock)
+            lock (_providerLock)
             {
                 if (!_indexWriters.ContainsKey(indexName) || _indexWriters[indexName] == null)
                 {

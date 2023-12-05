@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtoCommerce.SearchModule.Core.Model;
 using Xunit;
+using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.LuceneSearchModule.Tests
 {
@@ -274,7 +275,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             var request = new SearchRequest
             {
                 SearchKeywords = " shirt ",
-                SearchFields = new[] { "Content" },
+                SearchFields = new[] { ContentFieldName },
                 Take = 10,
             };
 
@@ -288,7 +289,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             request = new SearchRequest
             {
                 SearchKeywords = "red shirt",
-                SearchFields = new[] { "Content" },
+                SearchFields = new[] { ContentFieldName },
                 Take = 10,
             };
 
