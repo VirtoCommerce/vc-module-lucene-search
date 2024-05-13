@@ -9,7 +9,7 @@
     <dependency id="VirtoCommerce.Search" version="3.800.0" />
   </dependencies>
 
-  <title>Lucene Search module</title>
+  <title>Lucene Search</title>
   <description>Indexed search functionality with Lucene engine</description>
   <authors>
     <author>Artem Dudarev</author>
