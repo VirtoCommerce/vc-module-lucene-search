@@ -8,8 +8,8 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Util;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
+using Spatial4n.Context;
+using Spatial4n.Distance;
 using VirtoCommerce.SearchModule.Core.Model;
 using TermFilter = VirtoCommerce.SearchModule.Core.Model.TermFilter;
 
@@ -118,8 +118,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (geoDistanceFilter?.FieldName != null && geoDistanceFilter.Location != null)
             {
-                var spatialContext = SpatialContext.GEO;
-                var distance = DistanceUtils.Dist2Degrees(geoDistanceFilter.Distance, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                var spatialContext = SpatialContext.Geo;
+                var distance = DistanceUtils.Dist2Degrees(geoDistanceFilter.Distance, DistanceUtils.EarthMeanRadiusKilometers);
                 var searchArea = spatialContext.MakeCircle(geoDistanceFilter.Location.Longitude, geoDistanceFilter.Location.Latitude, distance);
                 var spatialArgs = new SpatialArgs(SpatialOperation.Intersects, searchArea);
 

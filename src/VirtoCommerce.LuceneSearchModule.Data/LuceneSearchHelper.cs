@@ -55,15 +55,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
                 if (terms != null)
                 {
-                    var termsEnum = terms.GetIterator(null);
-                    while (true)
+                    foreach (var termsEnum in terms)
                     {
-                        var term = termsEnum.Next();
-                        if (term == null)
-                        {
-                            break;
-                        }
-
                         yield return Term.ToString(termsEnum.Term);
                     }
                 }

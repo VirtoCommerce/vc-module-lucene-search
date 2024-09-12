@@ -48,7 +48,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             foreach (var field in documentFields)
             {
-                var stringValue = field.GetStringValue();
+                var stringValue = field.GetStringValue(CultureInfo.InvariantCulture);
 
                 if (field.Name.EqualsInvariant(LuceneSearchHelper.KeyFieldName))
                 {

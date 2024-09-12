@@ -13,7 +13,7 @@ using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Options;
-using Spatial4n.Core.Context;
+using Spatial4n.Context;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Exceptions;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -26,7 +26,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
     {
         private static readonly object _providerLock = new();
         private static readonly Dictionary<string, IndexWriter> _indexWriters = new();
-        private static readonly SpatialContext _spatialContext = SpatialContext.GEO;
+        private static readonly SpatialContext _spatialContext = SpatialContext.Geo;
 
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
