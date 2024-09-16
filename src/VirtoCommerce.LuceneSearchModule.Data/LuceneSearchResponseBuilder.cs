@@ -155,14 +155,19 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         private static string GetFacetFieldName(string originalName, ICollection<string> availableFields)
         {
-            var result = LuceneSearchHelper.GetFacetableFieldName(originalName);
-
-            if (!availableFields.Contains(result))
+            var result = LuceneSearchHelper.GetDoubleFieldName(originalName);
+            if (availableFields.Contains(result))
             {
-                result = LuceneSearchHelper.ToLuceneFieldName(originalName);
+                return result;
             }
 
-            return result;
+            result = LuceneSearchHelper.GetIntegerFieldName(originalName);
+            if (availableFields.Contains(result))
+            {
+                return result;
+            }
+
+            return LuceneSearchHelper.ToLuceneFieldName(originalName);
         }
 
         private static AggregationResponse CreateRangeAggregationResponse(RangeAggregationRequest rangeAggregationRequest, IndexSearcher searcher, ICollection<string> availableFields)
@@ -172,7 +177,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             if (rangeAggregationRequest != null)
             {
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(rangeAggregationRequest.FieldName);
-                var valueFilters = rangeAggregationRequest.Values?.ToDictionary(v => v.Id, v => LuceneSearchFilterBuilder.CreateRangeFilterForValue(fieldName, v.Lower, v.Upper, v.IncludeLower, v.IncludeUpper));
+                var valueFilters = rangeAggregationRequest.Values?.ToDictionary(v => v.Id, v => LuceneSearchFilterBuilder.CreateRangeFilterForValue(fieldName, v.Lower, v.Upper, v.IncludeLower, v.IncludeUpper, availableFields));
 
                 result = GetAggregation(rangeAggregationRequest, valueFilters, searcher, false, null, availableFields);
             }

@@ -11,7 +11,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         public const string SearchableFieldName = "__all";
         public const string BooleanFieldSuffix = ".boolean";
         public const string DateTimeFieldSuffix = ".datetime";
-        public const string FacetableFieldSuffix = ".facetable";
+        public const string DoubleFieldSuffix = ".double";
+        public const string IntegerFieldSuffix = ".integer";
 
         public static readonly string[] SearchableFields = { SearchableFieldName };
 
@@ -30,9 +31,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return ToLuceneFieldName(originalName + DateTimeFieldSuffix);
         }
 
-        public static string GetFacetableFieldName(string originalName)
+        public static string GetDoubleFieldName(string originalName)
         {
-            return ToLuceneFieldName(originalName + FacetableFieldSuffix);
+            return ToLuceneFieldName(originalName + DoubleFieldSuffix);
+        }
+
+        public static string GetIntegerFieldName(string originalName)
+        {
+            return ToLuceneFieldName(originalName + IntegerFieldSuffix);
         }
 
         public static string ToStringInvariant(this object value)
