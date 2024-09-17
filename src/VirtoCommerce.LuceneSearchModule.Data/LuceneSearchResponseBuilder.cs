@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
+using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Model;
 
@@ -84,7 +85,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     }
                     else
                     {
-                        result.Add(field.Name, stringValue);
+                        var value = availableFields.Contains(LuceneSearchHelper.GetComplexFieldName(field.Name))
+                            ? JsonConvert.DeserializeObject(stringValue)
+                            : stringValue;
+
+                        result.Add(field.Name, value);
                     }
                 }
             }

@@ -293,6 +293,13 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                         result.Add(new Field(LuceneSearchHelper.GetIntegerFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
+                case IndexDocumentFieldValueType.Complex:
+                    {
+                        var stringValue = field.Value.SerializeJson();
+                        result.Add(new StoredField(fieldName, stringValue));
+                        result.Add(new Field(LuceneSearchHelper.GetComplexFieldName(field.Name), string.Empty, StringField.TYPE_NOT_STORED));
+                    }
+                    break;
                 default:
                     result.AddRange(field.Values.Select(value =>
                         new Field(fieldName, value.ToStringInvariant(), field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));

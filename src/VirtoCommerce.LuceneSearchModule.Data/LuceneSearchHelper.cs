@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Lucene.Net.Index;
+using Newtonsoft.Json;
 
 namespace VirtoCommerce.LuceneSearchModule.Data
 {
@@ -13,6 +14,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         public const string DateTimeFieldSuffix = ".datetime";
         public const string DoubleFieldSuffix = ".double";
         public const string IntegerFieldSuffix = ".integer";
+        public const string ComplexFieldSuffix = ".complex";
 
         public static readonly string[] SearchableFields = { SearchableFieldName };
 
@@ -39,6 +41,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         public static string GetIntegerFieldName(string originalName)
         {
             return ToLuceneFieldName(originalName + IntegerFieldSuffix);
+        }
+
+        public static string GetComplexFieldName(string originalName)
+        {
+            return ToLuceneFieldName(originalName + ComplexFieldSuffix);
         }
 
         public static string ToStringInvariant(this object value)
@@ -77,6 +84,20 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                                 .ToArray();
 
             return availableFields;
+        }
+
+        public static string SerializeJson(this object source, JsonSerializerSettings settings = null)
+        {
+            settings ??= new JsonSerializerSettings
+            {
+                DefaultValueHandling = DefaultValueHandling.Include,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.None,
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.None,
+            };
+
+            return JsonConvert.SerializeObject(source, settings);
         }
     }
 }
