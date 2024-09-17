@@ -231,24 +231,16 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             switch (field.ValueType)
             {
                 case IndexDocumentFieldValueType.String:
-                    if (_textFields.Any(x => x.EqualsInvariant(field.Name)))
+                    var isTextField = _textFields.Any(x => x.EqualsInvariant(field.Name));
+                    var stored = isTextField ? TextField.TYPE_STORED : StringField.TYPE_STORED;
+                    var notStored = isTextField ? TextField.TYPE_NOT_STORED : StringField.TYPE_NOT_STORED;
+                    foreach (var value in field.Values)
                     {
-                        result.AddRange(field.Values.Select(v =>
-                            new Field(fieldName, (string)v, field.IsRetrievable ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED)));
+                        var stringValue = (string)value;
+                        result.Add(new Field(fieldName, stringValue, field.IsRetrievable ? stored : notStored));
                         if (field.IsSearchable)
                         {
-                            result.AddRange(field.Values.Select(v =>
-                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, TextField.TYPE_NOT_STORED)));
-                        }
-                    }
-                    else
-                    {
-                        result.AddRange(field.Values.Select(v =>
-                            new Field(fieldName, (string)v, field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
-                        if (field.IsSearchable)
-                        {
-                            result.AddRange(field.Values.Select(v =>
-                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, StringField.TYPE_NOT_STORED)));
+                            result.Add(new Field(LuceneSearchHelper.SearchableFieldName, stringValue, notStored));
                         }
                     }
                     break;
@@ -263,9 +255,10 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                 case IndexDocumentFieldValueType.DateTime:
                     foreach (var value in field.Values)
                     {
+                        var stringValue = value.ToStringInvariant();
                         var numericField = new Int64Field(fieldName, ((DateTime)value).Ticks, field.IsRetrievable ? Int64Field.TYPE_STORED : Int64Field.TYPE_NOT_STORED);
                         result.Add(numericField);
-                        result.Add(new Field(LuceneSearchHelper.GetDateTimeFieldName(field.Name), value.ToStringInvariant(), StringField.TYPE_NOT_STORED));
+                        result.Add(new Field(LuceneSearchHelper.GetDateTimeFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
                 case IndexDocumentFieldValueType.GeoPoint:
