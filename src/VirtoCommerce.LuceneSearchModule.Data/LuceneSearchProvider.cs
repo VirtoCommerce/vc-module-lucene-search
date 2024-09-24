@@ -188,7 +188,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     var count = Math.Max(providerRequest?.Count ?? 0, 1);
 
                     var providerResponse = sort != null
-                        ? searcher.Search(query, filter, count, sort)
+                        ? searcher.Search(query, filter, count, sort, doDocScores: sort.NeedsScores, doMaxScore: sort.NeedsScores)
                         : searcher.Search(query, filter, count);
 
                     var result = providerResponse.ToSearchResponse(request, searcher, documentType, availableFields);
