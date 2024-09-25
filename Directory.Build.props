@@ -8,5 +8,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU5104</WarningsNotAsErrors>
   </PropertyGroup>
 </Project>
