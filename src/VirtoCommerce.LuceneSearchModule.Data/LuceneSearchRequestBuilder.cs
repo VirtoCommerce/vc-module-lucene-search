@@ -49,9 +49,13 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             }
 
             var dataType = SortFieldType.STRING_VAL;
-            if (availableFields.Contains(LuceneSearchHelper.GetFacetableFieldName(field.FieldName)))
+            if (availableFields.Contains(LuceneSearchHelper.GetDoubleFieldName(field.FieldName)))
             {
                 dataType = SortFieldType.DOUBLE;
+            }
+            else if (availableFields.Contains(LuceneSearchHelper.GetIntegerFieldName(field.FieldName)))
+            {
+                dataType = SortFieldType.INT32;
             }
             else if (availableFields.Contains(LuceneSearchHelper.GetDateTimeFieldName(field.FieldName)))
             {
