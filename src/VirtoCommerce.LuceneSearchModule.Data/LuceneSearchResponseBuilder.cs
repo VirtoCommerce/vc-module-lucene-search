@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.SearchModule.Core.Extensions;
 using VirtoCommerce.SearchModule.Core.Model;
 
 namespace VirtoCommerce.LuceneSearchModule.Data
@@ -34,14 +35,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             for (var i = request.Skip; i < maxIndex; i++)
             {
                 var providerDocument = searcher.Doc(response.ScoreDocs[i].Doc);
-                var document = ToSearchDocument(providerDocument, availableFields);
+                var document = ToSearchDocument(providerDocument, availableFields, response.ScoreDocs[i].Score);
                 result.Add(document);
             }
 
             return result;
         }
 
-        private static SearchDocument ToSearchDocument(Document providerDocument, ICollection<string> availableFields)
+        private static SearchDocument ToSearchDocument(Document providerDocument, ICollection<string> availableFields, float score)
         {
             var result = new SearchDocument();
 
@@ -93,6 +94,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                     }
                 }
             }
+
+            result.SetRelevanceScore(score);
 
             return result;
         }
