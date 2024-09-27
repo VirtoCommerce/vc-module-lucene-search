@@ -8,8 +8,8 @@ using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Util;
-using Spatial4n.Core.Context;
-using Spatial4n.Core.Distance;
+using Spatial4n.Context;
+using Spatial4n.Distance;
 using VirtoCommerce.SearchModule.Core.Model;
 using TermFilter = VirtoCommerce.SearchModule.Core.Model.TermFilter;
 
@@ -40,7 +40,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             }
             else if (rangeFilter != null)
             {
-                result = CreateRangeFilter(rangeFilter);
+                result = CreateRangeFilter(rangeFilter, availableFields);
             }
             else if (geoDistanceFilter != null)
             {
@@ -83,18 +83,16 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (termFilter?.FieldName != null && termFilter.Values != null)
             {
-                var isBooleanField = availableFields.Contains(LuceneSearchHelper.GetBooleanFieldName(termFilter.FieldName));
-                var isStringField = string.Equals("code", termFilter.FieldName, StringComparison.InvariantCultureIgnoreCase);
-                var values = termFilter.Values.Select(v => GetFilterValue(v, isBooleanField, isStringField)).ToArray();
-
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(termFilter.FieldName);
+
+                var values = termFilter.Values.Select(v => GetFilterValue(fieldName, v, availableFields)).ToArray();
                 result = CreateTermsFilter(fieldName, values);
             }
 
             return result;
         }
 
-        private static Filter CreateRangeFilter(RangeFilter rangeFilter)
+        private static Filter CreateRangeFilter(RangeFilter rangeFilter, ICollection<string> availableFields)
         {
             Filter result = null;
 
@@ -102,7 +100,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(rangeFilter.FieldName);
 
-                var childFilters = rangeFilter.Values.Select(v => CreateRangeFilterForValue(fieldName, v))
+                var childFilters = rangeFilter.Values.Select(v => CreateRangeFilterForValue(fieldName, v, availableFields))
                     .Where(f => f != null)
                     .ToArray();
 
@@ -118,8 +116,8 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             if (geoDistanceFilter?.FieldName != null && geoDistanceFilter.Location != null)
             {
-                var spatialContext = SpatialContext.GEO;
-                var distance = DistanceUtils.Dist2Degrees(geoDistanceFilter.Distance, DistanceUtils.EARTH_MEAN_RADIUS_KM);
+                var spatialContext = SpatialContext.Geo;
+                var distance = DistanceUtils.Dist2Degrees(geoDistanceFilter.Distance, DistanceUtils.EarthMeanRadiusKilometers);
                 var searchArea = spatialContext.MakeCircle(geoDistanceFilter.Location.Longitude, geoDistanceFilter.Location.Latitude, distance);
                 var spatialArgs = new SpatialArgs(SpatialOperation.Intersects, searchArea);
 
@@ -176,7 +174,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             QueryWrapperFilter result = null;
 
-            if (wildcardTermFilter?.FieldName != null && wildcardTermFilter?.Value != null)
+            if (wildcardTermFilter?.FieldName != null && wildcardTermFilter.Value != null)
             {
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(wildcardTermFilter.FieldName);
                 var term = new Term(fieldName, wildcardTermFilter.Value);
@@ -216,40 +214,50 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return result;
         }
 
-        private static Filter CreateRangeFilterForValue(string fieldName, RangeFilterValue value)
+        private static Filter CreateRangeFilterForValue(string fieldName, RangeFilterValue value, ICollection<string> availableFields)
         {
-            return CreateRangeFilterForValue(fieldName, value.Lower, value.Upper, value.IncludeLower, value.IncludeUpper);
+            return CreateRangeFilterForValue(fieldName, value.Lower, value.Upper, value.IncludeLower, value.IncludeUpper, availableFields);
         }
 
-        public static Filter CreateRangeFilterForValue(string fieldName, string lower, string upper, bool includeLower, bool includeUpper)
+        public static Filter CreateRangeFilterForValue(string fieldName, string lower, string upper, bool includeLower, bool includeUpper, ICollection<string> availableFields)
         {
-            Filter result = null;
-
             // If both bounds are empty, ignore this range
-            if (!string.IsNullOrEmpty(lower) || !string.IsNullOrEmpty(upper))
+            if (string.IsNullOrEmpty(lower) && string.IsNullOrEmpty(upper))
+            {
+                return null;
+            }
+
+            if (availableFields.Contains(LuceneSearchHelper.GetDateTimeFieldName(fieldName)))
             {
                 var lowerLong = ConvertToDateTimeTicks(lower);
                 var upperLong = ConvertToDateTimeTicks(upper);
                 if (lowerLong != null || upperLong != null)
                 {
-                    result = NumericRangeFilter.NewInt64Range(fieldName, lowerLong, upperLong, includeLower, includeUpper);
-                }
-                else
-                {
-                    var lowerDouble = ConvertToDouble(lower);
-                    var upperDouble = ConvertToDouble(upper);
-                    if (lowerDouble != null || upperDouble != null)
-                    {
-                        result = NumericRangeFilter.NewDoubleRange(fieldName, lowerDouble, upperDouble, includeLower, includeUpper);
-                    }
-                    else
-                    {
-                        result = TermRangeFilter.NewStringRange(fieldName, lower, upper, includeLower, includeUpper);
-                    }
+                    return NumericRangeFilter.NewInt64Range(fieldName, lowerLong, upperLong, includeLower, includeUpper);
                 }
             }
 
-            return result;
+            if (availableFields.Contains(LuceneSearchHelper.GetDoubleFieldName(fieldName)))
+            {
+                var lowerDouble = ConvertToDouble(lower);
+                var upperDouble = ConvertToDouble(upper);
+                if (lowerDouble != null || upperDouble != null)
+                {
+                    return NumericRangeFilter.NewDoubleRange(fieldName, lowerDouble, upperDouble, includeLower, includeUpper);
+                }
+            }
+
+            if (availableFields.Contains(LuceneSearchHelper.GetIntegerFieldName(fieldName)))
+            {
+                var lowerDouble = ConvertToInteger(lower);
+                var upperDouble = ConvertToInteger(upper);
+                if (lowerDouble != null || upperDouble != null)
+                {
+                    return NumericRangeFilter.NewInt32Range(fieldName, lowerDouble, upperDouble, includeLower, includeUpper);
+                }
+            }
+
+            return TermRangeFilter.NewStringRange(fieldName, lower, upper, includeLower, includeUpper);
         }
 
         public static Filter CreateTermsFilter(string fieldName, string value)
@@ -265,68 +273,85 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             return query;
         }
 
-        private static string GetFilterValue(string value, bool isBooleanField, bool isStringField)
+        private static string GetFilterValue(string fieldName, string value, ICollection<string> availableFields)
         {
             if (string.IsNullOrEmpty(value))
             {
                 return string.Empty;
             }
 
-            if (isStringField)
-                return value;
-
-            if (isBooleanField)
+            if (availableFields.Contains(LuceneSearchHelper.GetBooleanFieldName(fieldName)))
             {
                 return bool.Parse(value).ToStringInvariant();
             }
 
-            var dateValue = ConvertToDateTimeTicks(value);
-            if (dateValue != null)
+            if (availableFields.Contains(LuceneSearchHelper.GetDateTimeFieldName(fieldName)))
             {
-                return ConvertLongToString(dateValue.Value);
+                var longValue = ConvertToDateTimeTicks(value)!.Value;
+                var stringValue = ConvertLongToString(longValue);
+                return stringValue;
             }
 
-            var dobuleValue = ConvertToDouble(value);
-            if (dobuleValue.HasValue)
+            if (availableFields.Contains(LuceneSearchHelper.GetDoubleFieldName(fieldName)))
             {
-                var longValue = NumericUtils.DoubleToSortableInt64(dobuleValue.Value);
-                return ConvertLongToString(longValue);
-
+                var doubleValue = ConvertToDouble(value)!.Value;
+                var longValue = NumericUtils.DoubleToSortableInt64(doubleValue);
+                var stringValue = ConvertLongToString(longValue);
+                return stringValue;
             }
+
+            if (availableFields.Contains(LuceneSearchHelper.GetIntegerFieldName(fieldName)))
+            {
+                var intValue = ConvertToInteger(value)!.Value;
+                var stringValue = ConvertIntToString(intValue);
+                return stringValue;
+            }
+
             return value;
         }
 
         private static long? ConvertToDateTimeTicks(string input)
         {
-            long? result = null;
-
-            DateTime value;
-            if (DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
+            if (DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.None, out var value))
             {
-                result = value.Ticks;
+                return value.Ticks;
             }
 
-            return result;
+            return null;
         }
 
         private static double? ConvertToDouble(string input)
         {
-            double? result = null;
-
-            double value;
-            if (double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out value))
+            if (double.TryParse(input, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
             {
-                result = value;
+                return value;
             }
 
-            return result;
+            return null;
+        }
+
+        private static int? ConvertToInteger(string input)
+        {
+            if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value))
+            {
+                return value;
+            }
+
+            return null;
         }
 
         private static string ConvertLongToString(long longValue)
         {
-            var act = new BytesRef();
-            NumericUtils.Int64ToPrefixCoded(longValue, 0, act);
-            return act.Utf8ToString();
+            var bytes = new BytesRef();
+            NumericUtils.Int64ToPrefixCoded(longValue, 0, bytes);
+            return bytes.Utf8ToString();
+        }
+
+        private static string ConvertIntToString(int intValue)
+        {
+            var bytes = new BytesRef();
+            NumericUtils.Int32ToPrefixCoded(intValue, 0, bytes);
+            return bytes.Utf8ToString();
         }
     }
 }

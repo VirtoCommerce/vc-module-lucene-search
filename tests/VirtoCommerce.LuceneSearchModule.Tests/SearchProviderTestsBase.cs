@@ -19,12 +19,12 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             return new List<IndexDocument>
             {
-                CreateDocument("Item-1", "Sample Product", "Red", "2017-04-28T15:24:31.3068224Z", 2, "0,0", null, null, new Price("USD", "default", 123.23m)),
-                CreateDocument("Item-2", "Red Shirt 2", "Red", "2017-04-27T15:24:31.3068224Z", 4, "0,10", null, null, new Price("USD", "default", 200m), new Price("USD", "sale", 99m), new Price("EUR", "sale", 300m)),
-                CreateDocument("Item-3", "Red Shirt", "Red", "2017-04-26T15:24:31.3068224Z", 3, "0,20", null, null, new Price("USD", "default", 10m)),
-                CreateDocument("Item-4", "Black Sox", "Black", "2017-04-25T15:24:31.3068224Z", 10, "0,30", null, null, new Price("USD", "default", 243.12m), new Price("USD", "super-sale", 89m)),
-                CreateDocument("Item-5", "Black Sox2", "Silver", "2017-04-24T15:24:31.3068224Z", 20, "0,40", null, null, new Price("USD", "default", 700m)),
-                CreateDocument("565567699", "Green Sox", "Green", "2021-05-12T08:51:42.3068224Z", 30, "0,40", null, null, new Price("USD", "default", 900m)),
+                CreateDocument("Item-1", "Sample Product", "Red", "2017-04-28T15:24:31.3068224Z", 2, "0,0", null, null, new TestObjectValue(true, "Boolean"), new Price("USD", "default", 123.23m)),
+                CreateDocument("Item-2", "Red Shirt 2", "Red", "2017-04-27T15:24:31.3068224Z", 4, "0,10", null, null, new TestObjectValue("string", "ShortText"), new Price("USD", "default", 200m), new Price("USD", "sale", 99m), new Price("EUR", "sale", 300m)),
+                CreateDocument("Item-3", "Red Shirt", "Red", "2017-04-26T15:24:31.3068224Z", 3, "0,20", null, null, new TestObjectValue(true, "Boolean"), new Price("USD", "default", 10m)),
+                CreateDocument("Item-4", "Black Sox", "Black", "2017-04-25T15:24:31.3068224Z", 10, "0,30", null, null, new TestObjectValue(99.99m, "Number"), new Price("USD", "default", 243.12m), new Price("USD", "super-sale", 89m)),
+                CreateDocument("Item-5", "Black Sox2", "Silver", "2017-04-24T15:24:31.3068224Z", 20, "0,40", null, null, new TestObjectValue(new DateTime(2020, 12, 17, 0, 0, 0), "DateTime"), new Price("USD", "default", 700m)),
+                CreateDocument("565567699", "Green Sox", "Green", "2021-05-12T08:51:42.3068224Z", 30, "0,40", null, null, new TestObjectValue(true, "Boolean"), new Price("USD", "default", 900m)),
             };
         }
 
@@ -41,7 +41,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             };
         }
 
-        protected virtual IndexDocument CreateDocument(string id, string name, string color, string date, int size, string location, string name2, DateTime? date2, params Price[] prices)
+        protected virtual IndexDocument CreateDocument(string id, string name, string color, string date, int size, string location, string name2, DateTime? date2, object obj, params Price[] prices)
         {
             var doc = new IndexDocument(id);
 
@@ -84,6 +84,8 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             {
                 doc.AddFilterableDateTime("Date (2)", date2.Value);
             }
+
+            doc.Add(new IndexDocumentField("__obj", obj, IndexDocumentFieldValueType.Complex) { IsRetrievable = true, IsFilterable = true });
 
             return doc;
         }
@@ -181,6 +183,66 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
         {
             T GetValue<T>(string name, T defaultValue);
             Task<T> GetValueAsync<T>(string name, T defaultValue);
+        }
+
+        public class TestObjectValue : IEntity
+        {
+            public TestObjectValue(object value, string valueType)
+                : this()
+            {
+                AddProperty(value, valueType);
+            }
+
+            public TestObjectValue()
+            {
+                Id = Guid.NewGuid().ToString();
+                var ids = new[] { Id };
+                StringArray = ids;
+                StringList = ids;
+            }
+
+            public Property AddProperty(object value, string valueType)
+            {
+                var propValue = new PropertyValue { Value = value, ValueType = valueType };
+                var values = new[] { propValue };
+                var property = new Property
+                {
+                    Array = values,
+                    List = values,
+                    ValueInProperty = propValue,
+                    Value = value
+                };
+
+                TestProperties.Add(property);
+
+                return property;
+            }
+
+            public IList<Property> TestProperties { get; set; } = new List<Property>();
+            public string Id { get; set; }
+            public string[] StringArray { get; set; }
+            public IList<string> StringList { get; set; }
+            public PropertyValue Value { get; set; }
+        }
+
+        public class Property : IEntity
+        {
+            public string[] Ids { get; set; }
+            public PropertyValue[] Array { get; set; }
+            public IList<PropertyValue> List { get; set; } = new List<PropertyValue>();
+            public PropertyValue ValueInProperty { get; set; }
+            public string ValueType { get; set; }
+            public bool IsActive { get; set; }
+            public string Id { get; set; }
+            public object Value { get; set; }
+        }
+
+        public class PropertyValue : IEntity
+        {
+            public object Value { get; set; }
+            public string ValueType { get; set; }
+            public bool IsActive { get; set; }
+            public string Id { get; set; }
         }
     }
 }

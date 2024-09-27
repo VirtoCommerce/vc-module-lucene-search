@@ -13,7 +13,7 @@ using Lucene.Net.Spatial.Vector;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Microsoft.Extensions.Options;
-using Spatial4n.Core.Context;
+using Spatial4n.Context;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Exceptions;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -26,7 +26,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
     {
         private static readonly object _providerLock = new();
         private static readonly Dictionary<string, IndexWriter> _indexWriters = new();
-        private static readonly SpatialContext _spatialContext = SpatialContext.GEO;
+        private static readonly SpatialContext _spatialContext = SpatialContext.Geo;
 
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
@@ -228,79 +228,74 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             var fieldName = LuceneSearchHelper.ToLuceneFieldName(field.Name);
 
-            switch (field.Value)
+            switch (field.ValueType)
             {
-                case string:
-                    if (_textFields.Any(x => x.EqualsInvariant(field.Name)))
+                case IndexDocumentFieldValueType.String:
+                    var isTextField = _textFields.Any(x => x.EqualsInvariant(field.Name));
+                    var stored = isTextField ? TextField.TYPE_STORED : StringField.TYPE_STORED;
+                    var notStored = isTextField ? TextField.TYPE_NOT_STORED : StringField.TYPE_NOT_STORED;
+                    foreach (var value in field.Values)
                     {
-                        result.AddRange(field.Values.Select(v =>
-                            new Field(fieldName, (string)v, field.IsRetrievable ? TextField.TYPE_STORED : TextField.TYPE_NOT_STORED)));
+                        var stringValue = (string)value;
+                        result.Add(new Field(fieldName, stringValue, field.IsRetrievable ? stored : notStored));
                         if (field.IsSearchable)
                         {
-                            result.AddRange(field.Values.Select(v =>
-                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, TextField.TYPE_NOT_STORED)));
-                        }
-                    }
-                    else
-                    {
-                        result.AddRange(field.Values.Select(v =>
-                            new Field(fieldName, (string)v, field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
-                        if (field.IsSearchable)
-                        {
-                            result.AddRange(field.Values.Select(v =>
-                                new Field(LuceneSearchHelper.SearchableFieldName, (string)v, StringField.TYPE_NOT_STORED)));
+                            result.Add(new Field(LuceneSearchHelper.SearchableFieldName, stringValue, notStored));
                         }
                     }
                     break;
-                case bool:
-                    var booleanFieldName = LuceneSearchHelper.GetBooleanFieldName(field.Name);
-
+                case IndexDocumentFieldValueType.Boolean:
                     foreach (var value in field.Values)
                     {
                         var stringValue = value.ToStringInvariant();
                         result.Add(new Field(fieldName, stringValue, field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED));
-                        result.Add(new Field(booleanFieldName, stringValue, StringField.TYPE_NOT_STORED));
+                        result.Add(new Field(LuceneSearchHelper.GetBooleanFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
-                case DateTime:
-                    var dateTimeFieldName = LuceneSearchHelper.GetDateTimeFieldName(field.Name);
-
+                case IndexDocumentFieldValueType.DateTime:
                     foreach (var value in field.Values)
                     {
+                        var stringValue = value.ToStringInvariant();
                         var numericField = new Int64Field(fieldName, ((DateTime)value).Ticks, field.IsRetrievable ? Int64Field.TYPE_STORED : Int64Field.TYPE_NOT_STORED);
                         result.Add(numericField);
-                        result.Add(new Field(dateTimeFieldName, value.ToStringInvariant(), StringField.TYPE_NOT_STORED));
+                        result.Add(new Field(LuceneSearchHelper.GetDateTimeFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
                     }
                     break;
-                case GeoPoint geoPoint:
+                case IndexDocumentFieldValueType.GeoPoint:
+                    var geoPoint = (GeoPoint)field.Value;
                     var shape = _spatialContext.MakePoint(geoPoint.Longitude, geoPoint.Latitude);
                     var strategy = new PointVectorStrategy(_spatialContext, fieldName);
-
                     result.AddRange(strategy.CreateIndexableFields(shape));
                     result.Add(new StoredField(strategy.FieldName, shape.X.ToString(CultureInfo.InvariantCulture) + " " + shape.Y.ToString(CultureInfo.InvariantCulture)));
-
+                    break;
+                case IndexDocumentFieldValueType.Decimal:
+                case IndexDocumentFieldValueType.Double:
+                case IndexDocumentFieldValueType.Float:
+                    foreach (var value in field.Values)
+                    {
+                        var stringValue = value.ToStringInvariant();
+                        result.Add(new DoubleField(fieldName, double.Parse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture), field.IsRetrievable ? DoubleField.TYPE_STORED : DoubleField.TYPE_NOT_STORED));
+                        result.Add(new Field(LuceneSearchHelper.GetDoubleFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
+                    }
+                    break;
+                case IndexDocumentFieldValueType.Integer:
+                    foreach (var value in field.Values)
+                    {
+                        var stringValue = value.ToStringInvariant();
+                        result.Add(new Int32Field(fieldName, int.Parse(stringValue, NumberStyles.Integer, CultureInfo.InvariantCulture), field.IsRetrievable ? Int32Field.TYPE_STORED : Int32Field.TYPE_NOT_STORED));
+                        result.Add(new Field(LuceneSearchHelper.GetIntegerFieldName(field.Name), stringValue, StringField.TYPE_NOT_STORED));
+                    }
+                    break;
+                case IndexDocumentFieldValueType.Complex:
+                    {
+                        var stringValue = field.Value.SerializeJson();
+                        result.Add(new StoredField(fieldName, stringValue));
+                        result.Add(new Field(LuceneSearchHelper.GetComplexFieldName(field.Name), string.Empty, StringField.TYPE_NOT_STORED));
+                    }
                     break;
                 default:
-                    if (double.TryParse(field.Value.ToStringInvariant(), NumberStyles.Float, CultureInfo.InvariantCulture, out _))
-                    {
-                        var facetableFieldName = LuceneSearchHelper.GetFacetableFieldName(field.Name);
-
-                        foreach (var value in field.Values)
-                        {
-                            var stringValue = value.ToStringInvariant();
-
-                            var doubleField = new DoubleField(fieldName, double.Parse(stringValue, NumberStyles.Float, CultureInfo.InvariantCulture), field.IsRetrievable ? DoubleField.TYPE_STORED : DoubleField.TYPE_NOT_STORED);
-
-                            result.Add(doubleField);
-
-                            result.Add(new Field(facetableFieldName, stringValue, StringField.TYPE_NOT_STORED));
-                        }
-                    }
-                    else
-                    {
-                        result.AddRange(field.Values.Select(value =>
-                            new Field(fieldName, value.ToStringInvariant(), field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
-                    }
+                    result.AddRange(field.Values.Select(value =>
+                        new Field(fieldName, value.ToStringInvariant(), field.IsRetrievable ? StringField.TYPE_STORED : StringField.TYPE_NOT_STORED)));
                     break;
             }
 

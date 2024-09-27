@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using VirtoCommerce.SearchModule.Core.Model;
 using Xunit;
 using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
@@ -1233,6 +1234,29 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             Assert.Equal(1, GetAggregationValueCount(response, "Color", "Black"));
             Assert.Equal(1, GetAggregationValueCount(response, "Color", "Blue"));
             Assert.Equal(0, GetAggregationValueCount(response, "Color", "Silver"));
+        }
+
+        [Fact]
+        public async Task CanRetrieveComplexFields()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request = new SearchRequest
+            {
+                Take = 1,
+            };
+
+            // Act
+            var response = await provider.SearchAsync(DocumentType, request);
+
+            // Assert
+            Assert.Equal(1, response.DocumentsCount);
+
+            var document = response.Documents.First();
+            var complexField = document["__obj"] as JObject;
+
+            Assert.NotNull(complexField);
         }
     }
 }
