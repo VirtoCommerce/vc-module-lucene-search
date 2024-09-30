@@ -4,9 +4,9 @@
   <version>3.805.0</version>
   <version-tag />
 
-  <platformVersion>3.825.0</platformVersion>
+  <platformVersion>3.853.0</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Search" version="3.803.0" />
+    <dependency id="VirtoCommerce.Search" version="3.804.0" />
   </dependencies>
 
   <title>Lucene Search</title>
@@ -17,7 +17,7 @@
   <owners>
     <owner>Virto Commerce</owner>
   </owners>
-  <projectUrl>https://virtocommerce.com/apps/extensions/virto-lucene-search-module</projectUrl>
+  <projectUrl>https://github.com/VirtoCommerce/vc-module-lucene-search</projectUrl>
   <iconUrl>Modules/$(VirtoCommerce.LuceneSearch)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>Third version.</releaseNotes>
