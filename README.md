@@ -2,7 +2,7 @@
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-lucene-search/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-lucene-search/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search)
 
-The Virto Commerce Lucene Search module implements ISearchProvider defined in the Virto Commerce Search module and uses Lucene search engine wThehich stores indexed documents in a local file system.
+The Virto Commerce Lucene Search module implements ISearchProvider defined in the Virto Commerce Search module and uses Lucene search engine which stores indexed documents in a local file system.
 
 ## Configuration
 Azure Search provider are configurable by these configuration keys:
