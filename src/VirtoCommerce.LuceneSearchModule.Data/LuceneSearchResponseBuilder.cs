@@ -52,7 +52,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             {
                 var stringValue = field.GetStringValue(CultureInfo.InvariantCulture);
 
-                if (field.Name.EqualsInvariant(LuceneSearchHelper.KeyFieldName))
+                if (field.Name.EqualsIgnoreCase(LuceneSearchHelper.KeyFieldName))
                 {
                     result.Id = stringValue;
                 }
