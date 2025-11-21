@@ -312,7 +312,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         private static long? ConvertToDateTimeTicks(string input)
         {
-            if (DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.None, out var value))
+            if (DateTime.TryParse(input, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var value))
             {
                 return value.Ticks;
             }
