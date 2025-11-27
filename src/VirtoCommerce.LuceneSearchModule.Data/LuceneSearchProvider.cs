@@ -231,7 +231,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             switch (field.ValueType)
             {
                 case IndexDocumentFieldValueType.String:
-                    var isTextField = _textFields.Any(x => x.EqualsInvariant(field.Name));
+                    var isTextField = _textFields.Any(x => x.EqualsIgnoreCase(field.Name));
                     var stored = isTextField ? TextField.TYPE_STORED : StringField.TYPE_STORED;
                     var notStored = isTextField ? TextField.TYPE_NOT_STORED : StringField.TYPE_NOT_STORED;
                     foreach (var value in field.Values)
