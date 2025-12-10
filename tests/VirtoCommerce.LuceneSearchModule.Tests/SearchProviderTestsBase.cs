@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
@@ -50,7 +51,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             doc.AddFilterableString("Code", id);
             doc.AddFilterableInteger("Size", size);
-            doc.AddFilterableDateTime("Date", DateTime.Parse(date));
+            doc.AddFilterableDateTime("Date", DateTime.Parse(date, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind));
             doc.Add(new IndexDocumentField("Location", GeoPoint.TryParse(location), IndexDocumentFieldValueType.GeoPoint) { IsRetrievable = true, IsFilterable = true });
 
             doc.AddFilterableCollection("Catalog", "Goods");
