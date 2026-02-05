@@ -24,10 +24,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 {
     public class LuceneSearchProvider : ISearchProvider
     {
-        private static readonly object _providerLock = new();
-        private static readonly Dictionary<string, IndexWriter> _indexWriters = new();
         private static readonly SpatialContext _spatialContext = SpatialContext.Geo;
 
+        private readonly object _providerLock = new();
+        private readonly Dictionary<string, IndexWriter> _indexWriters = new();
+        private readonly Dictionary<string, RAMDirectory> _ramDirectories = new();
         private readonly LuceneSearchOptions _luceneSearchOptions;
         private readonly SearchOptions _searchOptions;
         private readonly string[] _textFields = { ContentFieldName, "content" };
@@ -123,39 +124,49 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             };
 
             var indexName = GetIndexName(documentType);
-            var directoryPath = GetDirectoryPath(indexName);
 
             CloseWriter(indexName, false);
 
             Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
             var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
 
-            using (var directory = FSDirectory.Open(directoryPath))
-            using (var writer = new IndexWriter(directory, config))
+            var directory = GetDirectory(indexName);
+            try
             {
-                foreach (var document in documents)
+                using (var writer = new IndexWriter(directory, config))
                 {
-                    var resultItem = new IndexingResultItem { Id = document.Id };
-                    result.Items.Add(resultItem);
+                    foreach (var document in documents)
+                    {
+                        var resultItem = new IndexingResultItem { Id = document.Id };
+                        result.Items.Add(resultItem);
 
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(document.Id))
+                        try
                         {
-                            var trackingWriter = new TrackingIndexWriter(writer);
-                            var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
-                            var deleteResult = trackingWriter.DeleteDocuments(new TermQuery(term));
-                            resultItem.Succeeded = deleteResult == 1;
+                            if (!string.IsNullOrEmpty(document.Id))
+                            {
+                                var trackingWriter = new TrackingIndexWriter(writer);
+                                var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
+                                var deleteResult = trackingWriter.DeleteDocuments(new TermQuery(term));
+                                resultItem.Succeeded = deleteResult == 1;
+                            }
+                            else
+                            {
+                                resultItem.ErrorMessage = "Document ID is empty";
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            resultItem.ErrorMessage = "Document ID is empty";
+                            resultItem.ErrorMessage = ex.ToString();
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        resultItem.ErrorMessage = ex.ToString();
-                    }
+                }
+            }
+            finally
+            {
+                // Only dispose FSDirectory; RAMDirectory must be kept alive
+                if (!_luceneSearchOptions.UseInMemory)
+                {
+                    directory?.Dispose();
                 }
             }
 
@@ -164,11 +175,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         public virtual Task<SearchResponse> SearchAsync(string documentType, SearchRequest request)
         {
+            Lucene.Net.Store.Directory directory = null;
             try
             {
                 var indexName = GetIndexName(documentType);
-                var directoryPath = GetDirectoryPath(indexName);
-                using var directory = FSDirectory.Open(directoryPath);
+                directory = GetDirectory(indexName);
 
                 if (!DirectoryReader.IndexExists(directory))
                 {
@@ -198,6 +209,14 @@ namespace VirtoCommerce.LuceneSearchModule.Data
             catch (Exception ex)
             {
                 throw new SearchException(ex.Message, ex);
+            }
+            finally
+            {
+                // Only dispose FSDirectory; RAMDirectory must be kept alive
+                if (!_luceneSearchOptions.UseInMemory)
+                {
+                    directory?.Dispose();
+                }
             }
         }
 
@@ -331,10 +350,18 @@ namespace VirtoCommerce.LuceneSearchModule.Data
                 {
                     if (create)
                     {
-                        var directory = FSDirectory.Open(GetDirectoryPath(indexName));
+                        var directory = GetDirectory(indexName);
 
                         // Create new directory if it doesn't exist
-                        if (!directory.Directory.Exists)
+                        if (_luceneSearchOptions.UseInMemory)
+                        {
+                            // For RAM directories, check if any files exist
+                            if (directory.ListAll().Length == 0)
+                            {
+                                createNew = true;
+                            }
+                        }
+                        else if (directory is FSDirectory fsDir && !fsDir.Directory.Exists)
                         {
                             createNew = true;
                         }
@@ -362,6 +389,31 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         protected virtual string GetDirectoryPath(string indexName)
         {
             return Path.Combine(_luceneSearchOptions.Path, indexName);
+        }
+
+        /// <summary>
+        /// Gets or creates a Lucene directory for the specified index.
+        /// Returns RAMDirectory when UseInMemory is true, otherwise FSDirectory.
+        /// </summary>
+        /// <param name="indexName">The name of the index.</param>
+        /// <returns>A Lucene Directory instance.</returns>
+        protected virtual Lucene.Net.Store.Directory GetDirectory(string indexName)
+        {
+            if (_luceneSearchOptions.UseInMemory)
+            {
+                lock (_providerLock)
+                {
+                    if (!_ramDirectories.TryGetValue(indexName, out var ramDir))
+                    {
+                        ramDir = new RAMDirectory();
+                        _ramDirectories[indexName] = ramDir;
+                    }
+
+                    return ramDir;
+                }
+            }
+
+            return FSDirectory.Open(GetDirectoryPath(indexName));
         }
     }
 }
