@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:xunit.net)",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.lambdatest.com)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet list:*)",
+      "Bash(findstr:*)",
+      "Bash(dir:*)"
+    ]
+  }
+}
