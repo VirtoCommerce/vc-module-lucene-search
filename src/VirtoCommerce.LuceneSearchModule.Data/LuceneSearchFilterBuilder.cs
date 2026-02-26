@@ -69,7 +69,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             Filter result = null;
 
-            if (idsFilter?.Values != null)
+            if (idsFilter?.Values?.Count > 0)
             {
                 result = CreateTermsFilter(LuceneSearchHelper.KeyFieldName, idsFilter.Values);
             }
@@ -81,7 +81,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             Filter result = null;
 
-            if (termFilter?.FieldName != null && termFilter.Values != null)
+            if (termFilter?.FieldName != null && termFilter.Values?.Count > 0)
             {
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(termFilter.FieldName);
 
@@ -96,7 +96,7 @@ namespace VirtoCommerce.LuceneSearchModule.Data
         {
             Filter result = null;
 
-            if (rangeFilter?.FieldName != null && rangeFilter.Values != null)
+            if (rangeFilter?.FieldName != null && rangeFilter.Values?.Count > 0)
             {
                 var fieldName = LuceneSearchHelper.ToLuceneFieldName(rangeFilter.FieldName);
 

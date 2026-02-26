@@ -8,8 +8,8 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 {
     public class PriorityTestCaseOrderer : ITestCaseOrderer
     {
-        public const string TypeName = "VirtoCommerce.SearchModule.Tests.PriorityTestCaseOrderer";
-        public const string AssembyName = "VirtoCommerce.SearchModule.Tests";
+        public const string TypeName = "VirtoCommerce.LuceneSearchModule.Tests.PriorityTestCaseOrderer";
+        public const string AssemblyName = "VirtoCommerce.LuceneSearchModule.Tests";
 
         public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases)
             where TTestCase : ITestCase
