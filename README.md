@@ -2,14 +2,43 @@
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-lucene-search/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-lucene-search/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-lucene-search&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-lucene-search)
 
-The Virto Commerce Lucene Search module implements ISearchProvider defined in the Virto Commerce Search module and uses Lucene search engine which stores indexed documents in a local file system.
+The Virto Commerce Lucene Search module implements ISearchProvider defined in the Virto Commerce Search module and uses Lucene search engine which stores indexed documents in a local file system or in-memory.
 
 ## Configuration
-Azure Search provider are configurable by these configuration keys:
+Lucene Search provider is configurable by these configuration keys:
 
 * **Search.Provider** is the name of the search provider and must be **Lucene**
-* **Search.Lucene.Path** is a virtual or physical path to the root directory where indexed documents are stored.
+* **Search.Lucene.Path** is a virtual or physical path to the root directory where indexed documents are stored. Required when `UseInMemory` is `false`.
+* **Search.Lucene.UseInMemory** when set to `true`, uses in-memory RAMDirectory instead of the file system. Useful for automated testing scenarios. Default is `false`.
 * **Search.Scope** is a common name (prefix) of all indexes. Each document type is stored in a separate index. Full index name is `scope-{documenttype}`. One search service can serve multiple indexes.
+
+### Example configuration
+
+```json
+{
+  "Search": {
+    "Provider": "Lucene",
+    "Scope": "default",
+    "Lucene": {
+      "Path": "App_Data/Lucene"
+    }
+  }
+}
+```
+
+For testing:
+
+```json
+{
+  "Search": {
+    "Provider": "Lucene",
+    "Scope": "test",
+    "Lucene": {
+      "UseInMemory": true
+    }
+  }
+}
+```
 
 ## Documentation
 
