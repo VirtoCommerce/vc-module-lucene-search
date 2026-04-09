@@ -125,48 +125,51 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
             var indexName = GetIndexName(documentType);
 
-            CloseWriter(indexName, false);
-
-            Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
-            var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
-
-            var directory = GetDirectory(indexName);
-            try
+            lock (_providerLock)
             {
-                using (var writer = new IndexWriter(directory, config))
-                {
-                    foreach (var document in documents)
-                    {
-                        var resultItem = new IndexingResultItem { Id = document.Id };
-                        result.Items.Add(resultItem);
+                CloseWriter(indexName, false);
 
-                        try
+                Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+                var config = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
+
+                var directory = GetDirectory(indexName);
+                try
+                {
+                    using (var writer = new IndexWriter(directory, config))
+                    {
+                        foreach (var document in documents)
                         {
-                            if (!string.IsNullOrEmpty(document.Id))
+                            var resultItem = new IndexingResultItem { Id = document.Id };
+                            result.Items.Add(resultItem);
+
+                            try
                             {
-                                var trackingWriter = new TrackingIndexWriter(writer);
-                                var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
-                                var deleteResult = trackingWriter.DeleteDocuments(new TermQuery(term));
-                                resultItem.Succeeded = deleteResult == 1;
+                                if (!string.IsNullOrEmpty(document.Id))
+                                {
+                                    var trackingWriter = new TrackingIndexWriter(writer);
+                                    var term = new Term(LuceneSearchHelper.KeyFieldName, document.Id);
+                                    var deleteResult = trackingWriter.DeleteDocuments(new TermQuery(term));
+                                    resultItem.Succeeded = deleteResult == 1;
+                                }
+                                else
+                                {
+                                    resultItem.ErrorMessage = "Document ID is empty";
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                resultItem.ErrorMessage = "Document ID is empty";
+                                resultItem.ErrorMessage = ex.ToString();
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            resultItem.ErrorMessage = ex.ToString();
                         }
                     }
                 }
-            }
-            finally
-            {
-                // Only dispose FSDirectory; RAMDirectory must be kept alive
-                if (!_luceneSearchOptions.UseInMemory)
+                finally
                 {
-                    directory?.Dispose();
+                    // Only dispose FSDirectory; RAMDirectory must be kept alive
+                    if (!_luceneSearchOptions.UseInMemory)
+                    {
+                        directory?.Dispose();
+                    }
                 }
             }
 
@@ -388,6 +391,11 @@ namespace VirtoCommerce.LuceneSearchModule.Data
 
         protected virtual string GetDirectoryPath(string indexName)
         {
+            if (string.IsNullOrEmpty(_luceneSearchOptions.Path))
+            {
+                throw new InvalidOperationException("LuceneSearchOptions.Path must be configured when UseInMemory is false.");
+            }
+
             return Path.Combine(_luceneSearchOptions.Path, indexName);
         }
 
