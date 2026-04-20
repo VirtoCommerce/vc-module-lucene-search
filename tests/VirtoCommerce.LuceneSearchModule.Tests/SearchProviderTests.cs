@@ -8,7 +8,7 @@ using static VirtoCommerce.SearchModule.Core.Extensions.IndexDocumentExtensions;
 
 namespace VirtoCommerce.LuceneSearchModule.Tests
 {
-    [TestCaseOrderer(PriorityTestCaseOrderer.TypeName, PriorityTestCaseOrderer.AssembyName)]
+    [TestCaseOrderer(PriorityTestCaseOrderer.TypeName, PriorityTestCaseOrderer.AssemblyName)]
     [Trait("Category", "IntegrationTest")]
     public abstract class SearchProviderTests : SearchProviderTestsBase
     {
@@ -23,7 +23,7 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
             provider.IndexAsync(DocumentType, GetSecondaryDocuments()).GetAwaiter().GetResult();
         }
 
-        [Fact]
+        [Fact, Priority(100)]
         public virtual async Task CanAddAndRemoveDocuments()
         {
             // Arrange
@@ -299,6 +299,84 @@ namespace VirtoCommerce.LuceneSearchModule.Tests
 
             // Assert
             Assert.Equal(2, response.DocumentsCount);
+        }
+
+        [Fact]
+        public virtual async Task IdsFilterWithoutValues_ShouldBeIgnored()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request1 = new SearchRequest
+            {
+                Take = 10,
+            };
+
+            var request2 = new SearchRequest
+            {
+                Take = 10,
+                Filter = new IdsFilter { Values = [] },
+            };
+
+            // Act
+            var response1 = await provider.SearchAsync(DocumentType, request1);
+            var response2 = await provider.SearchAsync(DocumentType, request2);
+
+            // Assert
+            Assert.True(response1.DocumentsCount > 0);
+            Assert.Equal(response1.DocumentsCount, response2.DocumentsCount);
+        }
+
+        [Fact]
+        public virtual async Task TermFilterWithoutValues_ShouldBeIgnored()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request1 = new SearchRequest
+            {
+                Take = 10,
+            };
+
+            var request2 = new SearchRequest
+            {
+                Take = 10,
+                Filter = new TermFilter { FieldName = "Code", Values = [] },
+            };
+
+            // Act
+            var response1 = await provider.SearchAsync(DocumentType, request1);
+            var response2 = await provider.SearchAsync(DocumentType, request2);
+
+            // Assert
+            Assert.True(response1.DocumentsCount > 0);
+            Assert.Equal(response1.DocumentsCount, response2.DocumentsCount);
+        }
+
+        [Fact]
+        public virtual async Task RangeFilterWithoutValues_ShouldBeIgnored()
+        {
+            // Arrange
+            var provider = GetSearchProvider();
+
+            var request1 = new SearchRequest
+            {
+                Take = 10,
+            };
+
+            var request2 = new SearchRequest
+            {
+                Take = 10,
+                Filter = new RangeFilter { FieldName = "Size", Values = [] },
+            };
+
+            // Act
+            var response1 = await provider.SearchAsync(DocumentType, request1);
+            var response2 = await provider.SearchAsync(DocumentType, request2);
+
+            // Assert
+            Assert.True(response1.DocumentsCount > 0);
+            Assert.Equal(response1.DocumentsCount, response2.DocumentsCount);
         }
 
         [Fact]
