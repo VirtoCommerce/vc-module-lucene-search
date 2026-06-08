@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.LuceneSearch</id>
-  <version>3.1002.0</version>
+  <version>3.1003.0</version>
   <version-tag />
 
   <platformVersion>3.1002.0</platformVersion>
@@ -18,7 +18,7 @@
     <owner>Virto Commerce</owner>
   </owners>
   <projectUrl>https://github.com/VirtoCommerce/vc-module-lucene-search</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.LuceneSearch)/Content/logo.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.LuceneSearch)/Content/logo.svg</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>Third version.</releaseNotes>
   <copyright>Copyright © 2011-2026 Virto Commerce. All rights reserved</copyright>
